@@ -3,1569 +3,1452 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>KGOBA'S — Motorcycle Spares & Maintenance</title>
-<link href="https://fonts.googleapis.com/css2?family=Black+Han+Sans&family=Barlow+Condensed:wght@300;400;600;700;900&family=Barlow:wght@300;400&display=swap" rel="stylesheet">
+<title>KGOBA'S — Customer Portal</title>
+<link href="https://fonts.googleapis.com/css2?family=Black+Han+Sans&family=Barlow+Condensed:wght@300;400;600;700;900&family=Barlow:wght@300;400;500&display=swap" rel="stylesheet">
 <style>
-  :root {
-    --black: #0a0a0a;
-    --red: #e8001c;
-    --red-dark: #a30014;
-    --white: #f5f0e8;
-    --cream: #ede8de;
-    --yellow: #f5c400;
-    --grey: #1e1e1e;
-    --grey-mid: #2e2e2e;
-    --text-muted: #888;
-  }
-
-  * { margin: 0; padding: 0; box-sizing: border-box; }
-
-  html { scroll-behavior: smooth; }
-
-  body {
-    background: var(--black);
-    color: var(--white);
-    font-family: 'Barlow', sans-serif;
-    overflow-x: hidden;
-    cursor: none;
-  }
-
-  /* CUSTOM CURSOR */
-  .cursor {
-    position: fixed;
-    width: 12px; height: 12px;
-    background: var(--red);
-    border-radius: 50%;
-    pointer-events: none;
-    z-index: 9999;
-    transform: translate(-50%, -50%);
-    transition: transform 0.1s, background 0.2s;
-    mix-blend-mode: difference;
-  }
-  .cursor-ring {
-    position: fixed;
-    width: 36px; height: 36px;
-    border: 1px solid var(--red);
-    border-radius: 50%;
-    pointer-events: none;
-    z-index: 9998;
-    transform: translate(-50%, -50%);
-    transition: all 0.15s ease;
-    opacity: 0.6;
-  }
-
-  /* NOISE OVERLAY */
-  body::before {
-    content: '';
-    position: fixed;
-    top: 0; left: 0; right: 0; bottom: 0;
-    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='1'/%3E%3C/svg%3E");
-    opacity: 0.025;
-    pointer-events: none;
-    z-index: 9000;
-  }
-
-  /* NAVIGATION */
-  nav {
-    position: fixed;
-    top: 0; left: 0; right: 0;
-    z-index: 100;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 20px 48px;
-    background: linear-gradient(to bottom, rgba(10,10,10,0.95), transparent);
-    backdrop-filter: blur(2px);
-  }
-
-  .nav-logo {
-    font-family: 'Black Han Sans', sans-serif;
-    font-size: 22px;
-    letter-spacing: 0.12em;
-    color: var(--white);
-    text-decoration: none;
-  }
-  .nav-logo span { color: var(--red); }
-
-  .nav-links {
-    display: flex;
-    gap: 36px;
-    list-style: none;
-  }
-  .nav-links a {
-    font-family: 'Barlow Condensed', sans-serif;
-    font-size: 13px;
-    font-weight: 600;
-    letter-spacing: 0.2em;
-    text-transform: uppercase;
-    color: var(--white);
-    text-decoration: none;
-    opacity: 0.7;
-    transition: opacity 0.2s, color 0.2s;
-  }
-  .nav-links a:hover { opacity: 1; color: var(--red); }
-
-  .nav-cta {
-    font-family: 'Barlow Condensed', sans-serif;
-    font-size: 12px;
-    font-weight: 700;
-    letter-spacing: 0.2em;
-    text-transform: uppercase;
-    background: var(--red);
-    color: var(--white);
-    padding: 10px 24px;
-    text-decoration: none;
-    transition: background 0.2s;
-  }
-  .nav-cta:hover { background: var(--red-dark); }
-
-  /* HERO */
-  .hero {
-    min-height: 100vh;
-    position: relative;
-    display: flex;
-    align-items: flex-end;
-    padding: 0 48px 80px;
-    overflow: hidden;
-  }
-
-  .hero-bg {
-    position: absolute;
-    inset: 0;
-    background: radial-gradient(ellipse 80% 60% at 65% 40%, #1a0005 0%, var(--black) 70%);
-  }
-
-  .hero-grid {
-    position: absolute;
-    inset: 0;
-    background-image:
-      linear-gradient(rgba(232,0,28,0.07) 1px, transparent 1px),
-      linear-gradient(90deg, rgba(232,0,28,0.07) 1px, transparent 1px);
-    background-size: 60px 60px;
-    transform: perspective(800px) rotateX(20deg) translateY(-100px);
-    transform-origin: bottom center;
-    opacity: 0.5;
-  }
-
-  .hero-year {
-    position: absolute;
-    right: 48px;
-    top: 50%;
-    transform: translateY(-50%);
-    font-family: 'Black Han Sans', sans-serif;
-    font-size: clamp(180px, 22vw, 360px);
-    line-height: 1;
-    color: transparent;
-    -webkit-text-stroke: 1px rgba(232,0,28,0.15);
-    pointer-events: none;
-    user-select: none;
-  }
-
-  .hero-badge {
-    position: absolute;
-    top: 120px;
-    right: 200px;
-    width: 130px; height: 130px;
-    border: 2px solid var(--red);
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    animation: spin 20s linear infinite;
-  }
-  .hero-badge-inner {
-    font-family: 'Barlow Condensed', sans-serif;
-    font-size: 9px;
-    font-weight: 700;
-    letter-spacing: 0.25em;
-    text-transform: uppercase;
-    text-align: center;
-    color: var(--red);
-    line-height: 1.6;
-  }
-
-  @keyframes spin { to { transform: rotate(360deg); } }
-
-  .hero-content { position: relative; z-index: 2; max-width: 800px; }
-
-  .hero-tag {
-    font-family: 'Barlow Condensed', sans-serif;
-    font-size: 12px;
-    font-weight: 700;
-    letter-spacing: 0.3em;
-    text-transform: uppercase;
-    color: var(--red);
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    margin-bottom: 24px;
-    opacity: 0;
-    animation: fadeUp 0.8s ease forwards 0.3s;
-  }
-  .hero-tag::before {
-    content: '';
-    width: 40px;
-    height: 2px;
-    background: var(--red);
-  }
-
-  .hero-title {
-    font-family: 'Black Han Sans', sans-serif;
-    font-size: clamp(64px, 9vw, 130px);
-    line-height: 0.88;
-    letter-spacing: -0.01em;
-    text-transform: uppercase;
-    opacity: 0;
-    animation: fadeUp 0.8s ease forwards 0.5s;
-  }
-  .hero-title .line2 {
-    -webkit-text-stroke: 1px var(--white);
-    color: transparent;
-  }
-  .hero-title .accent { color: var(--red); }
-
-  .hero-sub {
-    margin-top: 32px;
-    font-size: 16px;
-    font-weight: 300;
-    color: rgba(245,240,232,0.55);
-    max-width: 400px;
-    line-height: 1.7;
-    opacity: 0;
-    animation: fadeUp 0.8s ease forwards 0.7s;
-  }
-
-  .hero-actions {
-    margin-top: 48px;
-    display: flex;
-    gap: 20px;
-    align-items: center;
-    opacity: 0;
-    animation: fadeUp 0.8s ease forwards 0.9s;
-  }
-
-  .btn-primary {
-    font-family: 'Barlow Condensed', sans-serif;
-    font-size: 14px;
-    font-weight: 700;
-    letter-spacing: 0.2em;
-    text-transform: uppercase;
-    background: var(--red);
-    color: var(--white);
-    padding: 16px 40px;
-    text-decoration: none;
-    border: none;
-    cursor: pointer;
-    position: relative;
-    overflow: hidden;
-    transition: transform 0.2s;
-  }
-  .btn-primary::after {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background: rgba(255,255,255,0.1);
-    transform: translateX(-100%);
-    transition: transform 0.3s;
-  }
-  .btn-primary:hover::after { transform: translateX(0); }
-  .btn-primary:hover { transform: translateY(-2px); }
-
-  .btn-outline {
-    font-family: 'Barlow Condensed', sans-serif;
-    font-size: 14px;
-    font-weight: 700;
-    letter-spacing: 0.2em;
-    text-transform: uppercase;
-    background: transparent;
-    color: var(--white);
-    padding: 15px 40px;
-    text-decoration: none;
-    border: 1px solid rgba(245,240,232,0.3);
-    transition: border-color 0.2s, color 0.2s;
-  }
-  .btn-outline:hover { border-color: var(--white); }
-
-  .hero-stats {
-    position: absolute;
-    right: 48px;
-    bottom: 80px;
-    display: flex;
-    gap: 48px;
-    opacity: 0;
-    animation: fadeUp 0.8s ease forwards 1.1s;
-  }
-  .stat-item { text-align: right; }
-  .stat-num {
-    font-family: 'Black Han Sans', sans-serif;
-    font-size: 42px;
-    line-height: 1;
-    color: var(--white);
-  }
-  .stat-num span { color: var(--red); }
-  .stat-label {
-    font-family: 'Barlow Condensed', sans-serif;
-    font-size: 11px;
-    font-weight: 600;
-    letter-spacing: 0.2em;
-    text-transform: uppercase;
-    color: var(--text-muted);
-    margin-top: 4px;
-  }
-
-  .scroll-hint {
-    position: absolute;
-    bottom: 40px;
-    left: 50%;
-    transform: translateX(-50%);
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 8px;
-    opacity: 0.4;
-    animation: fadeIn 1s ease forwards 1.5s;
-  }
-  .scroll-hint span {
-    font-family: 'Barlow Condensed', sans-serif;
-    font-size: 10px;
-    letter-spacing: 0.25em;
-    text-transform: uppercase;
-  }
-  .scroll-line {
-    width: 1px;
-    height: 50px;
-    background: linear-gradient(to bottom, var(--white), transparent);
-    animation: scrollPulse 2s ease infinite;
-  }
-
-  @keyframes scrollPulse {
-    0%, 100% { transform: scaleY(1); opacity: 0.4; }
-    50% { transform: scaleY(0.5); opacity: 0.8; }
-  }
-
-  @keyframes fadeUp {
-    from { opacity: 0; transform: translateY(30px); }
-    to { opacity: 1; transform: translateY(0); }
-  }
-  @keyframes fadeIn {
-    to { opacity: 0.4; }
-  }
-
-  /* MARQUEE STRIP */
-  .marquee-strip {
-    background: var(--red);
-    padding: 14px 0;
-    overflow: hidden;
-    position: relative;
-  }
-  .marquee-track {
-    display: flex;
-    gap: 0;
-    animation: marquee 25s linear infinite;
-    white-space: nowrap;
-  }
-  .marquee-item {
-    font-family: 'Barlow Condensed', sans-serif;
-    font-size: 13px;
-    font-weight: 700;
-    letter-spacing: 0.25em;
-    text-transform: uppercase;
-    padding: 0 40px;
-    flex-shrink: 0;
-    display: flex;
-    align-items: center;
-    gap: 20px;
-  }
-  .marquee-item::after {
-    content: '//';
-    opacity: 0.5;
-  }
-
-  @keyframes marquee {
-    from { transform: translateX(0); }
-    to { transform: translateX(-50%); }
-  }
-
-  /* CATEGORIES */
-  .section { padding: 120px 48px; }
-  .section-label {
-    font-family: 'Barlow Condensed', sans-serif;
-    font-size: 11px;
-    font-weight: 700;
-    letter-spacing: 0.35em;
-    text-transform: uppercase;
-    color: var(--red);
-    margin-bottom: 20px;
-    display: flex;
-    align-items: center;
-    gap: 16px;
-  }
-  .section-label::after {
-    content: '';
-    flex: 1;
-    max-width: 60px;
-    height: 1px;
-    background: var(--red);
-  }
-
-  .section-title {
-    font-family: 'Black Han Sans', sans-serif;
-    font-size: clamp(40px, 5vw, 72px);
-    line-height: 0.9;
-    letter-spacing: -0.01em;
-    text-transform: uppercase;
-    margin-bottom: 64px;
-  }
-
-  /* CATEGORIES GRID */
-  .categories-grid {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 2px;
-  }
-
-  .cat-card {
-    position: relative;
-    background: var(--grey);
-    padding: 40px 32px;
-    cursor: pointer;
-    overflow: hidden;
-    transition: transform 0.3s;
-    border: 1px solid transparent;
-  }
-  .cat-card::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background: var(--red);
-    transform: scaleY(0);
-    transform-origin: bottom;
-    transition: transform 0.4s cubic-bezier(0.4,0,0.2,1);
-    z-index: 0;
-  }
-  .cat-card:hover::before { transform: scaleY(1); }
-  .cat-card:hover { transform: translateY(-4px); }
-
-  .cat-card > * { position: relative; z-index: 1; }
-
-  .cat-icon {
-    font-size: 36px;
-    margin-bottom: 20px;
-    display: block;
-    filter: grayscale(1);
-    transition: filter 0.3s;
-  }
-  .cat-card:hover .cat-icon { filter: none; }
-
-  .cat-num {
-    font-family: 'Barlow Condensed', sans-serif;
-    font-size: 11px;
-    font-weight: 700;
-    letter-spacing: 0.25em;
-    color: var(--text-muted);
-    margin-bottom: 8px;
-    transition: color 0.3s;
-  }
-  .cat-card:hover .cat-num { color: rgba(245,240,232,0.6); }
-
-  .cat-name {
-    font-family: 'Barlow Condensed', sans-serif;
-    font-size: 22px;
-    font-weight: 700;
-    letter-spacing: 0.05em;
-    text-transform: uppercase;
-    line-height: 1.1;
-    margin-bottom: 8px;
-  }
-
-  .cat-desc {
-    font-size: 13px;
-    color: var(--text-muted);
-    line-height: 1.5;
-    transition: color 0.3s;
-  }
-  .cat-card:hover .cat-desc { color: rgba(245,240,232,0.7); }
-
-  .cat-arrow {
-    position: absolute;
-    bottom: 24px;
-    right: 24px;
-    width: 36px;
-    height: 36px;
-    border: 1px solid rgba(245,240,232,0.2);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 18px;
-    transition: all 0.3s;
-  }
-  .cat-card:hover .cat-arrow {
-    background: rgba(0,0,0,0.2);
-    border-color: rgba(245,240,232,0.6);
-    transform: translate(2px, -2px);
-  }
-
-  /* FEATURED PRODUCTS */
-  .products-section { background: var(--grey); }
-
-  .products-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-end;
-    margin-bottom: 64px;
-  }
-
-  .filter-tabs {
-    display: flex;
-    gap: 4px;
-  }
-  .filter-tab {
-    font-family: 'Barlow Condensed', sans-serif;
-    font-size: 12px;
-    font-weight: 700;
-    letter-spacing: 0.2em;
-    text-transform: uppercase;
-    padding: 10px 24px;
-    border: none;
-    cursor: pointer;
-    background: transparent;
-    color: var(--text-muted);
-    transition: all 0.2s;
-    border-bottom: 2px solid transparent;
-  }
-  .filter-tab.active, .filter-tab:hover {
-    color: var(--white);
-    border-bottom-color: var(--red);
-  }
-
-  .products-grid {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 2px;
-  }
-
-  .product-card {
-    background: var(--black);
-    position: relative;
-    overflow: hidden;
-    cursor: pointer;
-  }
-  .product-card:hover .product-img-wrap img {
-    transform: scale(1.06);
-  }
-  .product-card:hover .product-overlay { opacity: 1; }
-
-  .product-img-wrap {
-    position: relative;
-    height: 220px;
-    overflow: hidden;
-    background: var(--grey-mid);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
-  .product-img-wrap img {
-    width: 100%;
-    height: 100%;
-    object-fit: contain;
-    transition: transform 0.5s cubic-bezier(0.4,0,0.2,1);
-    padding: 20px;
-    filter: brightness(0.9) contrast(1.1);
-  }
-
-  .product-overlay {
-    position: absolute;
-    inset: 0;
-    background: rgba(232,0,28,0.85);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    opacity: 0;
-    transition: opacity 0.3s;
-  }
-  .product-overlay span {
-    font-family: 'Barlow Condensed', sans-serif;
-    font-size: 13px;
-    font-weight: 700;
-    letter-spacing: 0.2em;
-    text-transform: uppercase;
-    color: var(--white);
-    border: 1px solid var(--white);
-    padding: 10px 24px;
-  }
-
-  .product-badge {
-    position: absolute;
-    top: 12px;
-    left: 12px;
-    font-family: 'Barlow Condensed', sans-serif;
-    font-size: 10px;
-    font-weight: 700;
-    letter-spacing: 0.15em;
-    text-transform: uppercase;
-    padding: 4px 10px;
-    background: var(--yellow);
-    color: var(--black);
-    z-index: 2;
-  }
-
-  .product-info { padding: 20px 20px 24px; }
-
-  .product-code {
-    font-family: 'Barlow Condensed', sans-serif;
-    font-size: 10px;
-    font-weight: 700;
-    letter-spacing: 0.25em;
-    color: var(--text-muted);
-    margin-bottom: 6px;
-  }
-
-  .product-name {
-    font-family: 'Barlow Condensed', sans-serif;
-    font-size: 17px;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
-    line-height: 1.2;
-    margin-bottom: 14px;
-  }
-
-  .product-footer {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-  }
-
-  .product-price {
-    font-family: 'Black Han Sans', sans-serif;
-    font-size: 26px;
-    color: var(--red);
-    letter-spacing: -0.02em;
-  }
-
-  .add-btn {
-    width: 36px; height: 36px;
-    background: var(--red);
-    border: none;
-    color: var(--white);
-    font-size: 20px;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: background 0.2s;
-  }
-  .add-btn:hover { background: var(--red-dark); }
-
-  /* ABOUT SECTION */
-  .about-section {
-    position: relative;
-    overflow: hidden;
-    background: var(--black);
-    padding: 120px 48px;
-  }
-
-  .about-bg-text {
-    position: absolute;
-    top: 50%;
-    left: -20px;
-    transform: translateY(-50%);
-    font-family: 'Black Han Sans', sans-serif;
-    font-size: 280px;
-    line-height: 1;
-    color: transparent;
-    -webkit-text-stroke: 1px rgba(232,0,28,0.06);
-    pointer-events: none;
-    user-select: none;
-    white-space: nowrap;
-  }
-
-  .about-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 120px;
-    align-items: center;
-    position: relative;
-    z-index: 2;
-  }
-
-  .about-left {}
-
-  .about-desc {
-    font-size: 18px;
-    font-weight: 300;
-    line-height: 1.8;
-    color: rgba(245,240,232,0.7);
-    margin-bottom: 40px;
-  }
-
-  .about-features {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 24px;
-    margin-top: 48px;
-  }
-
-  .feature-item {
-    border-left: 2px solid var(--red);
-    padding-left: 20px;
-  }
-
-  .feature-title {
-    font-family: 'Barlow Condensed', sans-serif;
-    font-size: 15px;
-    font-weight: 700;
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
-    margin-bottom: 6px;
-  }
-
-  .feature-desc {
-    font-size: 13px;
-    color: var(--text-muted);
-    line-height: 1.5;
-  }
-
-  .about-right {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 2px;
-  }
-
-  .stat-block {
-    background: var(--grey);
-    padding: 40px 32px;
-    text-align: center;
-  }
-  .stat-block:nth-child(1) { background: var(--red); }
-
-  .stat-block-num {
-    font-family: 'Black Han Sans', sans-serif;
-    font-size: 52px;
-    line-height: 1;
-    margin-bottom: 8px;
-  }
-  .stat-block:nth-child(1) .stat-block-num { color: var(--white); }
-
-  .stat-block-label {
-    font-family: 'Barlow Condensed', sans-serif;
-    font-size: 12px;
-    font-weight: 600;
-    letter-spacing: 0.2em;
-    text-transform: uppercase;
-    color: var(--text-muted);
-  }
-  .stat-block:nth-child(1) .stat-block-label { color: rgba(255,255,255,0.7); }
-
-  /* CONTACT SECTION */
-  .contact-section {
-    background: var(--grey);
-    padding: 120px 48px;
-    position: relative;
-    overflow: hidden;
-  }
-
-  .contact-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 80px;
-    align-items: start;
-    position: relative;
-    z-index: 2;
-  }
-
-  .contact-item {
-    display: flex;
-    gap: 20px;
-    align-items: flex-start;
-    margin-bottom: 40px;
-  }
-
-  .contact-icon {
-    width: 48px; height: 48px;
-    background: var(--red);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 20px;
-    flex-shrink: 0;
-  }
-
-  .contact-info-label {
-    font-family: 'Barlow Condensed', sans-serif;
-    font-size: 11px;
-    font-weight: 700;
-    letter-spacing: 0.25em;
-    text-transform: uppercase;
-    color: var(--text-muted);
-    margin-bottom: 6px;
-  }
-
-  .contact-info-value {
-    font-size: 16px;
-    color: var(--white);
-    line-height: 1.5;
-  }
-  .contact-info-value a {
-    color: var(--white);
-    text-decoration: none;
-    transition: color 0.2s;
-  }
-  .contact-info-value a:hover { color: var(--red); }
-
-  /* ORDER FORM */
-  .order-form { }
-
-  .form-group { margin-bottom: 20px; }
-
-  .form-label {
-    font-family: 'Barlow Condensed', sans-serif;
-    font-size: 11px;
-    font-weight: 700;
-    letter-spacing: 0.25em;
-    text-transform: uppercase;
-    color: var(--text-muted);
-    display: block;
-    margin-bottom: 8px;
-  }
-
-  .form-input, .form-textarea {
-    width: 100%;
-    background: var(--black);
-    border: 1px solid rgba(245,240,232,0.1);
-    color: var(--white);
-    padding: 14px 18px;
-    font-family: 'Barlow', sans-serif;
-    font-size: 15px;
-    transition: border-color 0.2s;
-    outline: none;
-  }
-  .form-input:focus, .form-textarea:focus {
-    border-color: var(--red);
-  }
-  .form-textarea { resize: vertical; min-height: 120px; }
-
-  .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
-
-  /* FOOTER */
-  footer {
-    background: var(--black);
-    padding: 60px 48px 40px;
-    border-top: 1px solid rgba(245,240,232,0.06);
-  }
-
-  .footer-top {
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
-    margin-bottom: 60px;
-  }
-
-  .footer-logo {
-    font-family: 'Black Han Sans', sans-serif;
-    font-size: 36px;
-    line-height: 1;
-    letter-spacing: 0.05em;
-    text-transform: uppercase;
-  }
-  .footer-logo span { color: var(--red); }
-
-  .footer-tagline {
-    font-family: 'Barlow Condensed', sans-serif;
-    font-size: 12px;
-    font-weight: 600;
-    letter-spacing: 0.2em;
-    text-transform: uppercase;
-    color: var(--text-muted);
-    margin-top: 8px;
-  }
-
-  .footer-links {
-    display: flex;
-    gap: 60px;
-  }
-
-  .footer-col-title {
-    font-family: 'Barlow Condensed', sans-serif;
-    font-size: 11px;
-    font-weight: 700;
-    letter-spacing: 0.3em;
-    text-transform: uppercase;
-    color: var(--red);
-    margin-bottom: 20px;
-  }
-
-  .footer-col ul { list-style: none; }
-  .footer-col ul li { margin-bottom: 10px; }
-  .footer-col ul a {
-    font-size: 14px;
-    color: var(--text-muted);
-    text-decoration: none;
-    transition: color 0.2s;
-  }
-  .footer-col ul a:hover { color: var(--white); }
-
-  .footer-bottom {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding-top: 32px;
-    border-top: 1px solid rgba(245,240,232,0.06);
-  }
-
-  .footer-copy {
-    font-size: 12px;
-    color: var(--text-muted);
-    letter-spacing: 0.05em;
-  }
-
-  .footer-address {
-    font-size: 12px;
-    color: var(--text-muted);
-    text-align: right;
-    line-height: 1.6;
-  }
-
-  /* DIAGONAL DIVIDER */
-  .diagonal-divider {
-    height: 60px;
-    background: var(--grey);
-    clip-path: polygon(0 0, 100% 100%, 100% 100%, 0 100%);
-    margin-top: -2px;
-  }
-  .diagonal-divider.flip {
-    background: var(--black);
-    clip-path: polygon(0 0, 100% 0, 100% 100%, 0 0);
-  }
-
-  /* SCROLLED NAV */
-  nav.scrolled {
-    background: rgba(10,10,10,0.97);
-    backdrop-filter: blur(10px);
-    border-bottom: 1px solid rgba(245,240,232,0.06);
-  }
-
-  /* MOBILE menu toggle */
-  .hamburger {
-    display: none;
-    flex-direction: column;
-    gap: 5px;
-    cursor: pointer;
-    padding: 4px;
-  }
-  .hamburger span {
-    display: block;
-    width: 24px; height: 2px;
-    background: var(--white);
-    transition: all 0.3s;
-  }
-
-  @media (max-width: 1100px) {
-    .categories-grid,
-    .products-grid {
-      grid-template-columns: repeat(2, 1fr);
-    }
-  }
-
-  @media (max-width: 768px) {
-    nav { padding: 16px 24px; }
-    .nav-links { display: none; }
-    .hamburger { display: flex; }
-    .hero { padding: 0 24px 80px; }
-    .hero-stats { display: none; }
-    .hero-badge { display: none; }
-    .section, .about-section, .contact-section, footer { padding: 80px 24px; }
-    .categories-grid, .products-grid { grid-template-columns: 1fr; }
-    .about-grid, .contact-grid { grid-template-columns: 1fr; gap: 48px; }
-    .hero-year { font-size: 30vw; top: auto; bottom: 80px; right: 24px; }
-    .footer-top { flex-direction: column; gap: 48px; }
-    .footer-links { flex-direction: column; gap: 32px; }
-    .footer-bottom { flex-direction: column; gap: 16px; text-align: center; }
-    .products-header { flex-direction: column; align-items: flex-start; gap: 24px; }
-    .filter-tabs { flex-wrap: wrap; }
-  }
+:root {
+  --black: #0a0a0a;
+  --red: #e8001c;
+  --red-dark: #a30014;
+  --red-faint: rgba(232,0,28,0.08);
+  --white: #f5f0e8;
+  --cream: #ede8de;
+  --yellow: #f5c400;
+  --grey: #161616;
+  --grey-mid: #242424;
+  --grey-card: #1c1c1c;
+  --border: rgba(245,240,232,0.08);
+  --border-red: rgba(232,0,28,0.3);
+  --text-muted: #666;
+  --text-dim: #999;
+  --success: #22c55e;
+  --warning: #f59e0b;
+  --danger: #e8001c;
+}
+
+*{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{background:var(--black);color:var(--white);font-family:'Barlow',sans-serif;min-height:100vh;overflow-x:hidden;}
+
+/* NOISE */
+body::after{content:'';position:fixed;inset:0;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");opacity:0.018;pointer-events:none;z-index:9999;}
+
+/* LAYOUT */
+.app{display:flex;min-height:100vh;}
+
+/* SIDEBAR */
+.sidebar{width:260px;min-height:100vh;background:var(--grey);border-right:1px solid var(--border);display:flex;flex-direction:column;position:fixed;top:0;left:0;bottom:0;z-index:100;}
+.sidebar-logo{padding:28px 24px 20px;border-bottom:1px solid var(--border);}
+.sidebar-logo .wordmark{font-family:'Black Han Sans',sans-serif;font-size:20px;letter-spacing:0.08em;}
+.sidebar-logo .wordmark span{color:var(--red);}
+.sidebar-logo .portal-tag{font-family:'Barlow Condensed',sans-serif;font-size:10px;font-weight:700;letter-spacing:0.3em;text-transform:uppercase;color:var(--text-muted);margin-top:4px;}
+
+.sidebar-user{padding:16px 24px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:12px;}
+.user-avatar{width:36px;height:36px;background:var(--red);border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'Black Han Sans',sans-serif;font-size:14px;flex-shrink:0;}
+.user-info .name{font-size:13px;font-weight:500;}
+.user-info .email{font-size:11px;color:var(--text-muted);}
+
+.nav-section{padding:20px 0 8px;}
+.nav-label{font-family:'Barlow Condensed',sans-serif;font-size:10px;font-weight:700;letter-spacing:0.3em;text-transform:uppercase;color:var(--text-muted);padding:0 24px;margin-bottom:8px;}
+.nav-item{display:flex;align-items:center;gap:12px;padding:10px 24px;cursor:pointer;font-size:13px;color:var(--text-dim);transition:all 0.2s;border-left:2px solid transparent;text-decoration:none;}
+.nav-item:hover{color:var(--white);background:rgba(255,255,255,0.03);}
+.nav-item.active{color:var(--white);border-left-color:var(--red);background:rgba(232,0,28,0.06);}
+.nav-icon{width:16px;height:16px;flex-shrink:0;opacity:0.7;}
+.nav-item.active .nav-icon{opacity:1;}
+
+.sidebar-footer{margin-top:auto;padding:16px 24px;border-top:1px solid var(--border);}
+.logout-btn{font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:700;letter-spacing:0.2em;text-transform:uppercase;color:var(--text-muted);cursor:pointer;transition:color 0.2s;background:none;border:none;width:100%;text-align:left;padding:0;}
+.logout-btn:hover{color:var(--red);}
+
+/* MAIN */
+.main{margin-left:260px;flex:1;min-height:100vh;}
+.topbar{display:flex;align-items:center;justify-content:space-between;padding:20px 40px;border-bottom:1px solid var(--border);background:var(--grey);position:sticky;top:0;z-index:50;}
+.page-title{font-family:'Black Han Sans',sans-serif;font-size:22px;letter-spacing:0.05em;text-transform:uppercase;}
+.topbar-actions{display:flex;align-items:center;gap:12px;}
+.topbar-badge{font-family:'Barlow Condensed',sans-serif;font-size:10px;font-weight:700;letter-spacing:0.2em;text-transform:uppercase;padding:6px 14px;background:var(--red);color:var(--white);cursor:pointer;transition:background 0.2s;}
+.topbar-badge:hover{background:var(--red-dark);}
+
+.content{padding:40px;}
+
+/* PAGES */
+.page{display:none;}
+.page.active{display:block;animation:fadeIn 0.3s ease;}
+@keyframes fadeIn{from{opacity:0;transform:translateY(8px);}to{opacity:1;transform:translateY(0);}}
+
+/* AUTH SCREENS */
+.auth-screen{position:fixed;inset:0;background:var(--black);z-index:200;display:flex;align-items:center;justify-content:center;}
+.auth-box{width:100%;max-width:440px;padding:0 24px;}
+.auth-logo{font-family:'Black Han Sans',sans-serif;font-size:32px;letter-spacing:0.08em;margin-bottom:6px;}
+.auth-logo span{color:var(--red);}
+.auth-tag{font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:700;letter-spacing:0.3em;text-transform:uppercase;color:var(--text-muted);margin-bottom:36px;}
+.auth-title{font-family:'Barlow Condensed',sans-serif;font-size:28px;font-weight:700;text-transform:uppercase;letter-spacing:0.04em;margin-bottom:28px;}
+
+.form-group{margin-bottom:18px;}
+.form-label{font-family:'Barlow Condensed',sans-serif;font-size:10px;font-weight:700;letter-spacing:0.25em;text-transform:uppercase;color:var(--text-muted);display:block;margin-bottom:8px;}
+.form-input,.form-select{width:100%;background:var(--grey-mid);border:1px solid var(--border);color:var(--white);padding:12px 16px;font-family:'Barlow',sans-serif;font-size:14px;transition:border-color 0.2s;outline:none;appearance:none;}
+.form-input:focus,.form-select:focus{border-color:var(--red);}
+.form-input::placeholder{color:var(--text-muted);}
+.form-select option{background:var(--grey-mid);}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+
+.btn{font-family:'Barlow Condensed',sans-serif;font-size:13px;font-weight:700;letter-spacing:0.2em;text-transform:uppercase;padding:13px 28px;border:none;cursor:pointer;transition:all 0.2s;display:inline-flex;align-items:center;gap:8px;}
+.btn-red{background:var(--red);color:var(--white);}
+.btn-red:hover{background:var(--red-dark);}
+.btn-outline{background:transparent;color:var(--white);border:1px solid var(--border);}
+.btn-outline:hover{border-color:rgba(245,240,232,0.4);}
+.btn-ghost{background:transparent;color:var(--text-muted);border:1px solid transparent;}
+.btn-ghost:hover{color:var(--white);}
+.btn-block{width:100%;justify-content:center;}
+.btn-sm{padding:8px 18px;font-size:11px;}
+.btn-danger{background:transparent;color:var(--red);border:1px solid var(--border-red);}
+.btn-danger:hover{background:var(--red-faint);}
+
+.auth-switch{font-size:13px;color:var(--text-muted);margin-top:20px;text-align:center;}
+.auth-switch a{color:var(--red);cursor:pointer;text-decoration:none;}
+
+.auth-divider{display:flex;align-items:center;gap:16px;margin:24px 0;color:var(--text-muted);font-size:12px;}
+.auth-divider::before,.auth-divider::after{content:'';flex:1;height:1px;background:var(--border);}
+
+/* DASHBOARD */
+.metric-row{display:grid;grid-template-columns:repeat(4,1fr);gap:2px;margin-bottom:2px;}
+.metric-card{background:var(--grey-card);padding:28px 24px;}
+.metric-card.red-card{background:var(--red);}
+.metric-label{font-family:'Barlow Condensed',sans-serif;font-size:10px;font-weight:700;letter-spacing:0.25em;text-transform:uppercase;color:var(--text-muted);margin-bottom:10px;}
+.red-card .metric-label{color:rgba(245,240,232,0.6);}
+.metric-value{font-family:'Black Han Sans',sans-serif;font-size:36px;line-height:1;letter-spacing:-0.02em;}
+.metric-sub{font-size:12px;color:var(--text-muted);margin-top:6px;}
+.red-card .metric-sub{color:rgba(245,240,232,0.6);}
+
+.section-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;}
+.section-title{font-family:'Barlow Condensed',sans-serif;font-size:13px;font-weight:700;letter-spacing:0.25em;text-transform:uppercase;color:var(--text-muted);}
+
+.card{background:var(--grey-card);border:1px solid var(--border);padding:24px;}
+.card+.card{margin-top:2px;}
+
+/* STATUS BADGES */
+.badge{font-family:'Barlow Condensed',sans-serif;font-size:10px;font-weight:700;letter-spacing:0.15em;text-transform:uppercase;padding:4px 10px;display:inline-block;}
+.badge-active{background:rgba(34,197,94,0.12);color:#22c55e;}
+.badge-pending{background:rgba(245,158,11,0.12);color:#f59e0b;}
+.badge-cancelled{background:rgba(232,0,28,0.12);color:#e8001c;}
+.badge-paid{background:rgba(34,197,94,0.12);color:#22c55e;}
+.badge-overdue{background:rgba(232,0,28,0.12);color:#e8001c;}
+.badge-processing{background:rgba(99,102,241,0.12);color:#818cf8;}
+
+/* TABLES */
+.data-table{width:100%;border-collapse:collapse;}
+.data-table th{font-family:'Barlow Condensed',sans-serif;font-size:10px;font-weight:700;letter-spacing:0.25em;text-transform:uppercase;color:var(--text-muted);padding:10px 16px;text-align:left;border-bottom:1px solid var(--border);}
+.data-table td{padding:14px 16px;font-size:13px;border-bottom:1px solid rgba(245,240,232,0.04);}
+.data-table tr:last-child td{border-bottom:none;}
+.data-table tr:hover td{background:rgba(255,255,255,0.02);}
+
+/* ORDER ITEMS */
+.order-row{display:flex;align-items:center;justify-content:space-between;padding:16px 0;border-bottom:1px solid var(--border);}
+.order-row:last-child{border-bottom:none;}
+.order-code{font-family:'Barlow Condensed',sans-serif;font-size:10px;font-weight:700;letter-spacing:0.2em;color:var(--red);margin-bottom:4px;}
+.order-name{font-size:13px;font-weight:500;}
+.order-price{font-family:'Black Han Sans',sans-serif;font-size:20px;color:var(--red);}
+
+/* MAINTENANCE CONTRACT */
+.contract-header{background:var(--red);padding:32px 28px;margin-bottom:2px;}
+.contract-tier{font-family:'Black Han Sans',sans-serif;font-size:42px;letter-spacing:-0.01em;line-height:1;}
+.contract-price{font-family:'Barlow Condensed',sans-serif;font-size:16px;font-weight:700;letter-spacing:0.1em;margin-top:8px;opacity:0.85;}
+
+.plan-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:2px;margin-bottom:32px;}
+.plan-card{background:var(--grey-card);border:1px solid var(--border);padding:28px 24px;cursor:pointer;transition:border-color 0.2s;position:relative;}
+.plan-card.selected{border-color:var(--red);background:rgba(232,0,28,0.04);}
+.plan-card.popular::before{content:'POPULAR';position:absolute;top:-1px;right:20px;background:var(--yellow);color:var(--black);font-family:'Barlow Condensed',sans-serif;font-size:9px;font-weight:700;letter-spacing:0.2em;padding:3px 10px;}
+.plan-name{font-family:'Barlow Condensed',sans-serif;font-size:20px;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;margin-bottom:6px;}
+.plan-price{font-family:'Black Han Sans',sans-serif;font-size:34px;line-height:1;margin-bottom:4px;}
+.plan-price small{font-family:'Barlow Condensed',sans-serif;font-size:14px;font-weight:400;}
+.plan-desc{font-size:12px;color:var(--text-muted);margin-bottom:20px;line-height:1.6;}
+.plan-features{list-style:none;}
+.plan-features li{font-size:12px;color:var(--text-dim);padding:5px 0;display:flex;align-items:center;gap:8px;}
+.plan-features li::before{content:'';width:6px;height:6px;background:var(--red);flex-shrink:0;}
+.plan-card.selected .plan-features li{color:rgba(245,240,232,0.75);}
+
+/* PAYMENT METHODS */
+.pay-methods{display:grid;grid-template-columns:repeat(4,1fr);gap:2px;margin-bottom:24px;}
+.pay-method{background:var(--grey-card);border:1px solid var(--border);padding:18px;cursor:pointer;transition:border-color 0.2s;text-align:center;}
+.pay-method.selected{border-color:var(--red);}
+.pay-method-icon{font-size:22px;margin-bottom:8px;display:block;}
+.pay-method-name{font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:700;letter-spacing:0.15em;text-transform:uppercase;}
+
+/* TIMELINE */
+.timeline{padding-left:20px;border-left:1px solid var(--border);}
+.timeline-item{position:relative;padding:0 0 24px 24px;}
+.timeline-item::before{content:'';position:absolute;left:-5px;top:4px;width:8px;height:8px;border-radius:50%;background:var(--border);}
+.timeline-item.done::before{background:var(--success);}
+.timeline-item.current::before{background:var(--red);}
+.timeline-date{font-family:'Barlow Condensed',sans-serif;font-size:10px;font-weight:700;letter-spacing:0.2em;text-transform:uppercase;color:var(--text-muted);margin-bottom:4px;}
+.timeline-text{font-size:13px;}
+
+/* PROGRESS */
+.progress-bar{height:4px;background:var(--border);margin-top:8px;}
+.progress-fill{height:100%;background:var(--red);transition:width 0.6s ease;}
+
+/* MODAL */
+.modal-backdrop{position:fixed;inset:0;background:rgba(0,0,0,0.75);z-index:300;display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:opacity 0.2s;}
+.modal-backdrop.open{opacity:1;pointer-events:all;}
+.modal{background:var(--grey);width:100%;max-width:480px;max-height:85vh;overflow-y:auto;animation:slideUp 0.3s ease;}
+@keyframes slideUp{from{transform:translateY(20px);opacity:0;}to{transform:translateY(0);opacity:1;}}
+.modal-header{display:flex;align-items:center;justify-content:space-between;padding:24px 28px;border-bottom:1px solid var(--border);}
+.modal-title{font-family:'Barlow Condensed',sans-serif;font-size:16px;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;}
+.modal-close{background:none;border:none;color:var(--text-muted);font-size:20px;cursor:pointer;transition:color 0.2s;line-height:1;}
+.modal-close:hover{color:var(--white);}
+.modal-body{padding:28px;}
+.modal-footer{padding:20px 28px;border-top:1px solid var(--border);display:flex;gap:12px;justify-content:flex-end;}
+
+/* TOAST */
+.toast{position:fixed;bottom:28px;right:28px;background:var(--grey-card);border:1px solid var(--border);border-left:3px solid var(--success);padding:14px 20px;z-index:400;transform:translateX(120%);transition:transform 0.35s cubic-bezier(0.4,0,0.2,1);min-width:280px;max-width:360px;}
+.toast.show{transform:translateX(0);}
+.toast.error{border-left-color:var(--red);}
+.toast-title{font-family:'Barlow Condensed',sans-serif;font-size:12px;font-weight:700;letter-spacing:0.15em;text-transform:uppercase;margin-bottom:4px;}
+.toast-msg{font-size:12px;color:var(--text-muted);line-height:1.5;}
+
+/* MISC */
+.divider{height:1px;background:var(--border);margin:24px 0;}
+.text-muted{color:var(--text-muted);}
+.text-red{color:var(--red);}
+.text-sm{font-size:12px;}
+.text-xs{font-family:'Barlow Condensed',sans-serif;font-size:10px;font-weight:700;letter-spacing:0.2em;text-transform:uppercase;color:var(--text-muted);}
+.mt-8{margin-top:8px;}
+.mt-16{margin-top:16px;}
+.mt-24{margin-top:24px;}
+.mt-32{margin-top:32px;}
+.mb-8{margin-bottom:8px;}
+.mb-16{margin-bottom:16px;}
+.mb-24{margin-bottom:24px;}
+.flex{display:flex;}
+.flex-between{display:flex;align-items:center;justify-content:space-between;}
+.flex-center{display:flex;align-items:center;}
+.gap-8{gap:8px;}
+.gap-12{gap:12px;}
+.gap-16{gap:16px;}
+.gap-24{gap:24px;}
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:2px;}
+.warning-box{background:rgba(245,158,11,0.06);border:1px solid rgba(245,158,11,0.2);padding:16px 18px;border-left:3px solid var(--warning);}
+.danger-box{background:var(--red-faint);border:1px solid var(--border-red);padding:16px 18px;border-left:3px solid var(--red);}
+.info-box{background:rgba(99,102,241,0.06);border:1px solid rgba(99,102,241,0.2);padding:16px 18px;border-left:3px solid #818cf8;}
+
+@media(max-width:900px){
+  .sidebar{width:220px;}
+  .main{margin-left:220px;}
+  .metric-row{grid-template-columns:1fr 1fr;}
+  .plan-grid{grid-template-columns:1fr;}
+  .pay-methods{grid-template-columns:1fr 1fr;}
+}
+@media(max-width:640px){
+  .sidebar{display:none;}
+  .main{margin-left:0;}
+  .content{padding:20px;}
+  .metric-row{grid-template-columns:1fr 1fr;}
+}
 </style>
 </head>
 <body>
 
-<div class="cursor" id="cursor"></div>
-<div class="cursor-ring" id="cursorRing"></div>
+<!-- AUTH SCREEN -->
+<div class="auth-screen" id="authScreen">
+  <div class="auth-box">
+    <div class="auth-logo">KGOBA<span>'</span>S</div>
+    <div class="auth-tag">Customer Portal</div>
 
-<!-- NAVIGATION -->
-<nav id="navbar">
-  <a href="#" class="nav-logo">KGOBA<span>'</span>S</a>
-  <ul class="nav-links">
-    <li><a href="#categories">Catalogue</a></li>
-    <li><a href="#about">About</a></li>
-    <li><a href="#contact">Contact</a></li>
-  </ul>
-  <a href="#contact" class="nav-cta">Order Now</a>
-  <div class="hamburger">
-    <span></span><span></span><span></span>
-  </div>
-</nav>
-
-<!-- HERO -->
-<section class="hero">
-  <div class="hero-bg"></div>
-  <div class="hero-grid"></div>
-  <div class="hero-year">24</div>
-
-  <div class="hero-badge">
-    <div class="hero-badge-inner">
-      MANKWENG<br>★ LIMPOPO ★<br>SOUTH AFRICA
+    <!-- LOGIN -->
+    <div id="loginForm">
+      <div class="auth-title">Sign In</div>
+      <div class="form-group">
+        <label class="form-label">Email Address</label>
+        <input class="form-input" type="email" placeholder="you@example.com" id="loginEmail">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Password</label>
+        <input class="form-input" type="password" placeholder="••••••••" id="loginPass">
+      </div>
+      <button class="btn btn-red btn-block mt-24" onclick="doLogin()">Sign In</button>
+      <div class="auth-switch mt-16">Don't have an account? <a onclick="showRegister()">Create one</a></div>
     </div>
-  </div>
 
-  <div class="hero-content">
-    <div class="hero-tag">Est. Mankweng · Limpopo</div>
-    <h1 class="hero-title">
-      THE<br>
-      <span class="line2">MOTORCYCLE</span><br>
-      <span class="accent">SPARES</span>
-    </h1>
-    <p class="hero-sub">Complete catalogue of motorcycle spares, maintenance parts and accessories. CG, GY6, YBR, XR, ACE, Linhai and more.</p>
-    <div class="hero-actions">
-      <a href="#categories" class="btn-primary">Browse Catalogue</a>
-      <a href="#contact" class="btn-outline">Order Parts</a>
+    <!-- REGISTER -->
+    <div id="registerForm" style="display:none;">
+      <div class="auth-title">Create Account</div>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">First Name</label>
+          <input class="form-input" placeholder="Reuben" id="regFirst">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Last Name</label>
+          <input class="form-input" placeholder="Pheagane" id="regLast">
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Email</label>
+        <input class="form-input" type="email" placeholder="you@example.com" id="regEmail">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Phone / WhatsApp</label>
+        <input class="form-input" type="tel" placeholder="067 786 3332" id="regPhone">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Bike Model(s)</label>
+        <input class="form-input" placeholder="e.g. Honda CG 150, GY6 125" id="regBike">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Password</label>
+        <input class="form-input" type="password" placeholder="Create a password" id="regPass">
+      </div>
+      <button class="btn btn-red btn-block mt-24" onclick="doRegister()">Create Account</button>
+      <div class="auth-switch mt-16">Already have an account? <a onclick="showLogin()">Sign in</a></div>
     </div>
-  </div>
-
-  <div class="hero-stats">
-    <div class="stat-item">
-      <div class="stat-num">300<span>+</span></div>
-      <div class="stat-label">Products</div>
-    </div>
-    <div class="stat-item">
-      <div class="stat-num">60<span>+</span></div>
-      <div class="stat-label">Categories</div>
-    </div>
-    <div class="stat-item">
-      <div class="stat-num">10<span>+</span></div>
-      <div class="stat-label">Brands</div>
-    </div>
-  </div>
-
-  <div class="scroll-hint">
-    <span>Scroll</span>
-    <div class="scroll-line"></div>
-  </div>
-</section>
-
-<!-- MARQUEE -->
-<div class="marquee-strip">
-  <div class="marquee-track">
-    <div class="marquee-item">Air Filters</div>
-    <div class="marquee-item">Brake Masters</div>
-    <div class="marquee-item">Cylinder Kits</div>
-    <div class="marquee-item">Clutches</div>
-    <div class="marquee-item">CDI Units</div>
-    <div class="marquee-item">Exhausts</div>
-    <div class="marquee-item">Gaskets</div>
-    <div class="marquee-item">Chains & Sprockets</div>
-    <div class="marquee-item">Shocks & Yokes</div>
-    <div class="marquee-item">Tyres & Tubes</div>
-    <div class="marquee-item">Stators & Regulators</div>
-    <div class="marquee-item">Carburettors</div>
-    <!-- Duplicate for seamless loop -->
-    <div class="marquee-item">Air Filters</div>
-    <div class="marquee-item">Brake Masters</div>
-    <div class="marquee-item">Cylinder Kits</div>
-    <div class="marquee-item">Clutches</div>
-    <div class="marquee-item">CDI Units</div>
-    <div class="marquee-item">Exhausts</div>
-    <div class="marquee-item">Gaskets</div>
-    <div class="marquee-item">Chains & Sprockets</div>
-    <div class="marquee-item">Shocks & Yokes</div>
-    <div class="marquee-item">Tyres & Tubes</div>
-    <div class="marquee-item">Stators & Regulators</div>
-    <div class="marquee-item">Carburettors</div>
   </div>
 </div>
 
-<!-- CATEGORIES -->
-<section class="section" id="categories">
-  <div class="section-label">What We Stock</div>
-  <h2 class="section-title">Part<br>Categories</h2>
+<!-- PORTAL APP -->
+<div class="app" id="portalApp" style="display:none;">
 
-  <div class="categories-grid">
-    <div class="cat-card">
-      <span class="cat-icon">🔧</span>
-      <div class="cat-num">01</div>
-      <div class="cat-name">Engine & Internals</div>
-      <div class="cat-desc">Cylinder kits, pistons, cranks, heads, camshafts, gaskets & more</div>
-      <div class="cat-arrow">→</div>
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <div class="sidebar-logo">
+      <div class="wordmark">KGOBA<span>'</span>S</div>
+      <div class="portal-tag">Customer Portal</div>
     </div>
-    <div class="cat-card">
-      <span class="cat-icon">🛑</span>
-      <div class="cat-num">02</div>
-      <div class="cat-name">Brakes & Tyres</div>
-      <div class="cat-desc">Brake pads, shoes, disks, masters, calipers, tyres & tubes</div>
-      <div class="cat-arrow">→</div>
+    <div class="sidebar-user">
+      <div class="user-avatar" id="sidebarAvatar">RP</div>
+      <div class="user-info">
+        <div class="name" id="sidebarName">Reuben P.</div>
+        <div class="email" id="sidebarEmail">customer@email.com</div>
+      </div>
     </div>
-    <div class="cat-card">
-      <span class="cat-icon">⚡</span>
-      <div class="cat-num">03</div>
-      <div class="cat-name">Electrical</div>
-      <div class="cat-desc">CDI, stators, regulators, starters, relays, coils & wiring</div>
-      <div class="cat-arrow">→</div>
+    <nav class="nav-section">
+      <div class="nav-label">Menu</div>
+      <a class="nav-item active" onclick="showPage('dashboard', this)">
+        <svg class="nav-icon" fill="none" viewBox="0 0 16 16"><rect x="1" y="1" width="6" height="6" rx="1" stroke="currentColor" stroke-width="1.5"/><rect x="9" y="1" width="6" height="6" rx="1" stroke="currentColor" stroke-width="1.5"/><rect x="1" y="9" width="6" height="6" rx="1" stroke="currentColor" stroke-width="1.5"/><rect x="9" y="9" width="6" height="6" rx="1" stroke="currentColor" stroke-width="1.5"/></svg>
+        Dashboard
+      </a>
+      <a class="nav-item" onclick="showPage('orders', this)">
+        <svg class="nav-icon" fill="none" viewBox="0 0 16 16"><path d="M2 3h12M2 8h12M2 13h8" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+        My Orders
+      </a>
+      <a class="nav-item" onclick="showPage('stoporder', this)">
+        <svg class="nav-icon" fill="none" viewBox="0 0 16 16"><path d="M8 1v14M1 8h14" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+        New Order
+      </a>
+      <div class="nav-label" style="margin-top:16px;">Maintenance</div>
+      <a class="nav-item" onclick="showPage('contract', this)">
+        <svg class="nav-icon" fill="none" viewBox="0 0 16 16"><path d="M3 2h10a1 1 0 0 1 1 1v10a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1V3a1 1 0 0 1 1-1z" stroke="currentColor" stroke-width="1.5"/><path d="M5 6h6M5 9h4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+        Maintenance Plan
+      </a>
+      <a class="nav-item" onclick="showPage('payments', this)">
+        <svg class="nav-icon" fill="none" viewBox="0 0 16 16"><rect x="1" y="4" width="14" height="9" rx="1" stroke="currentColor" stroke-width="1.5"/><path d="M1 7h14" stroke="currentColor" stroke-width="1.5"/></svg>
+        Billing & Payments
+      </a>
+      <a class="nav-item" onclick="showPage('profile', this)">
+        <svg class="nav-icon" fill="none" viewBox="0 0 16 16"><circle cx="8" cy="5" r="3" stroke="currentColor" stroke-width="1.5"/><path d="M2 14c0-3.314 2.686-5 6-5s6 1.686 6 5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+        Profile
+      </a>
+    </nav>
+    <div class="sidebar-footer">
+      <button class="logout-btn" onclick="doLogout()">Sign Out →</button>
     </div>
-    <div class="cat-card">
-      <span class="cat-icon">🔗</span>
-      <div class="cat-num">04</div>
-      <div class="cat-name">Drive Train</div>
-      <div class="cat-desc">Chains, sprockets, clutches, CVTs, gearboxes & belts</div>
-      <div class="cat-arrow">→</div>
-    </div>
-    <div class="cat-card">
-      <span class="cat-icon">🏍️</span>
-      <div class="cat-num">05</div>
-      <div class="cat-name">Bodywork</div>
-      <div class="cat-desc">Fenders, side covers, tanks, seats, headlights & indicators</div>
-      <div class="cat-arrow">→</div>
-    </div>
-    <div class="cat-card">
-      <span class="cat-icon">🔩</span>
-      <div class="cat-num">06</div>
-      <div class="cat-name">Suspension</div>
-      <div class="cat-desc">Front & rear shocks, yokes, bearings & steering components</div>
-      <div class="cat-arrow">→</div>
-    </div>
-    <div class="cat-card">
-      <span class="cat-icon">🎛️</span>
-      <div class="cat-num">07</div>
-      <div class="cat-name">Controls & Cables</div>
-      <div class="cat-desc">Levers, grips, switches, cables, handlebars & mirrors</div>
-      <div class="cat-arrow">→</div>
-    </div>
-    <div class="cat-card">
-      <span class="cat-icon">⛽</span>
-      <div class="cat-num">08</div>
-      <div class="cat-name">Fuel System</div>
-      <div class="cat-desc">Carbs, carb kits, fuel taps, pumps, filters & manifolds</div>
-      <div class="cat-arrow">→</div>
-    </div>
-  </div>
-</section>
+  </aside>
 
-<!-- FEATURED PRODUCTS -->
-<section class="section products-section" id="products">
-  <div class="products-header">
-    <div>
-      <div class="section-label">Hand-picked</div>
-      <h2 class="section-title">Featured<br>Parts</h2>
-    </div>
-    <div class="filter-tabs">
-      <button class="filter-tab active" onclick="filterProducts('all', this)">All</button>
-      <button class="filter-tab" onclick="filterProducts('engine', this)">Engine</button>
-      <button class="filter-tab" onclick="filterProducts('brake', this)">Brakes</button>
-      <button class="filter-tab" onclick="filterProducts('electric', this)">Electrical</button>
-      <button class="filter-tab" onclick="filterProducts('body', this)">Body</button>
-    </div>
-  </div>
-
-  <div class="products-grid" id="productsGrid">
-
-    <div class="product-card" data-cat="engine">
-      <div class="product-img-wrap">
-        <img src="https://via.placeholder.com/300x200/1e1e1e/888888?text=GY6+150CC+BARREL" alt="GY6 Barrel Kit" onerror="this.style.display='none'">
-        <div style="font-family:'Black Han Sans',sans-serif;font-size:28px;color:#333;position:absolute;">⚙️</div>
-        <div class="product-overlay"><span>View Part</span></div>
-        <div class="product-badge">🔥 HOT</div>
-      </div>
-      <div class="product-info">
-        <div class="product-code">BP-CYL01</div>
-        <div class="product-name">GY6 150CC Barrel Kit</div>
-        <div class="product-footer">
-          <div class="product-price">R690</div>
-          <button class="add-btn" onclick="addToOrder('BP-CYL01 — GY6 150CC Barrel Kit — R690')">+</button>
-        </div>
+  <!-- MAIN CONTENT -->
+  <main class="main">
+    <div class="topbar">
+      <div class="page-title" id="topbarTitle">Dashboard</div>
+      <div class="topbar-actions">
+        <span class="topbar-badge" onclick="showPage('stoporder', document.querySelector('[onclick*=stoporder]'))">+ New Order</span>
       </div>
     </div>
+    <div class="content">
 
-    <div class="product-card" data-cat="brake">
-      <div class="product-img-wrap">
-        <div style="font-family:'Black Han Sans',sans-serif;font-size:28px;color:#333;position:absolute;">🛑</div>
-        <div class="product-overlay"><span>View Part</span></div>
-      </div>
-      <div class="product-info">
-        <div class="product-code">BP-BRAKEMASTER01</div>
-        <div class="product-name">Right Hand Brake Master 8MM</div>
-        <div class="product-footer">
-          <div class="product-price">R250</div>
-          <button class="add-btn" onclick="addToOrder('BP-BRAKEMASTER01 — Right Hand Brake Master — R250')">+</button>
-        </div>
-      </div>
-    </div>
-
-    <div class="product-card" data-cat="electric">
-      <div class="product-img-wrap">
-        <div style="font-family:'Black Han Sans',sans-serif;font-size:28px;color:#333;position:absolute;">⚡</div>
-        <div class="product-overlay"><span>View Part</span></div>
-        <div class="product-badge">PRICE DROP</div>
-      </div>
-      <div class="product-info">
-        <div class="product-code">BP-CDI01</div>
-        <div class="product-name">GY6 AC CDI Unit</div>
-        <div class="product-footer">
-          <div class="product-price">R180</div>
-          <button class="add-btn" onclick="addToOrder('BP-CDI01 — GY6 AC CDI — R180')">+</button>
-        </div>
-      </div>
-    </div>
-
-    <div class="product-card" data-cat="engine">
-      <div class="product-img-wrap">
-        <div style="font-family:'Black Han Sans',sans-serif;font-size:28px;color:#333;position:absolute;">🔧</div>
-        <div class="product-overlay"><span>View Part</span></div>
-        <div class="product-badge">NEW</div>
-      </div>
-      <div class="product-info">
-        <div class="product-code">BP-CARB02</div>
-        <div class="product-name">GY6 125/150CC Carburettor</div>
-        <div class="product-footer">
-          <div class="product-price">R550</div>
-          <button class="add-btn" onclick="addToOrder('BP-CARB02 — GY6 Carburettor — R550')">+</button>
-        </div>
-      </div>
-    </div>
-
-    <div class="product-card" data-cat="brake">
-      <div class="product-img-wrap">
-        <div style="font-family:'Black Han Sans',sans-serif;font-size:28px;color:#333;position:absolute;">🔴</div>
-        <div class="product-overlay"><span>View Part</span></div>
-      </div>
-      <div class="product-info">
-        <div class="product-code">BP-PADS01</div>
-        <div class="product-name">Universal Brake Pads FA86</div>
-        <div class="product-footer">
-          <div class="product-price">R130</div>
-          <button class="add-btn" onclick="addToOrder('BP-PADS01 — Universal Brake Pads FA86 — R130')">+</button>
-        </div>
-      </div>
-    </div>
-
-    <div class="product-card" data-cat="engine">
-      <div class="product-img-wrap">
-        <div style="font-family:'Black Han Sans',sans-serif;font-size:28px;color:#333;position:absolute;">🔩</div>
-        <div class="product-overlay"><span>View Part</span></div>
-        <div class="product-badge">PRICE DROP</div>
-      </div>
-      <div class="product-info">
-        <div class="product-code">BP-CLUTCH03</div>
-        <div class="product-name">CG 4 Bolt Clutch Assembly</div>
-        <div class="product-footer">
-          <div class="product-price">R300</div>
-          <button class="add-btn" onclick="addToOrder('BP-CLUTCH03 — CG 4 Bolt Clutch — R300')">+</button>
-        </div>
-      </div>
-    </div>
-
-    <div class="product-card" data-cat="body">
-      <div class="product-img-wrap">
-        <div style="font-family:'Black Han Sans',sans-serif;font-size:28px;color:#333;position:absolute;">🏍️</div>
-        <div class="product-overlay"><span>View Part</span></div>
-      </div>
-      <div class="product-info">
-        <div class="product-code">BP-HEADL07</div>
-        <div class="product-name">Black Metal LED Headlight 7"</div>
-        <div class="product-footer">
-          <div class="product-price">R500</div>
-          <button class="add-btn" onclick="addToOrder('BP-HEADL07 — Black LED Headlight 7inch — R500')">+</button>
-        </div>
-      </div>
-    </div>
-
-    <div class="product-card" data-cat="electric">
-      <div class="product-img-wrap">
-        <div style="font-family:'Black Han Sans',sans-serif;font-size:28px;color:#333;position:absolute;">🔋</div>
-        <div class="product-overlay"><span>View Part</span></div>
-        <div class="product-badge">NEW</div>
-      </div>
-      <div class="product-info">
-        <div class="product-code">BP-STATOR01</div>
-        <div class="product-name">CG 8 Pole Stator Coil</div>
-        <div class="product-footer">
-          <div class="product-price">R400</div>
-          <button class="add-btn" onclick="addToOrder('BP-STATOR01 — CG 8 Pole Stator — R400')">+</button>
-        </div>
-      </div>
-    </div>
-
-  </div>
-</section>
-
-<!-- ABOUT -->
-<section class="about-section" id="about">
-  <div class="about-bg-text">KGOBA'S</div>
-  <div class="about-grid">
-    <div class="about-left">
-      <div class="section-label">Our Story</div>
-      <h2 class="section-title">Built For<br>Riders</h2>
-      <p class="about-desc">
-        Based in Mankweng, Limpopo — Kgoba's Motorcycle Spares & Maintenance is your one-stop shop for quality motorcycle parts at fair prices. We stock everything from engine internals to bodywork for CG, GY6, YBR, XR, ACE, Linhai and many more models.
-      </p>
-      <p class="about-desc">
-        Order via WhatsApp or email. Fast, reliable service to get you back on the road.
-      </p>
-
-      <div class="about-features">
-        <div class="feature-item">
-          <div class="feature-title">Wide Selection</div>
-          <div class="feature-desc">300+ parts across 60+ categories for all popular models</div>
-        </div>
-        <div class="feature-item">
-          <div class="feature-title">Fair Prices</div>
-          <div class="feature-desc">Competitive pricing with regular price drops on selected items</div>
-        </div>
-        <div class="feature-item">
-          <div class="feature-title">Easy Ordering</div>
-          <div class="feature-desc">Order via WhatsApp or email — quick and hassle-free</div>
-        </div>
-        <div class="feature-item">
-          <div class="feature-title">Expert Knowledge</div>
-          <div class="feature-desc">We know bikes. Get the right part for your exact model</div>
-        </div>
-      </div>
-    </div>
-
-    <div class="about-right">
-      <div class="stat-block">
-        <div class="stat-block-num">300+</div>
-        <div class="stat-block-label">Part Numbers</div>
-      </div>
-      <div class="stat-block">
-        <div class="stat-block-num">60+</div>
-        <div class="stat-block-label">Categories</div>
-      </div>
-      <div class="stat-block">
-        <div class="stat-block-num">10+</div>
-        <div class="stat-block-label">Bike Models</div>
-      </div>
-      <div class="stat-block">
-        <div class="stat-block-num">R5</div>
-        <div class="stat-block-label">Parts From</div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- CONTACT -->
-<section class="contact-section" id="contact">
-  <div class="section-label">Get In Touch</div>
-  <h2 class="section-title">Order<br>A Part</h2>
-
-  <div class="contact-grid">
-    <div>
-      <div class="contact-item">
-        <div class="contact-icon">📱</div>
-        <div>
-          <div class="contact-info-label">WhatsApp</div>
-          <div class="contact-info-value">
-            <a href="https://wa.me/27677863332">067 786 3332</a>
+      <!-- DASHBOARD PAGE -->
+      <div class="page active" id="page-dashboard">
+        <div class="metric-row">
+          <div class="metric-card red-card">
+            <div class="metric-label">Active Plan</div>
+            <div class="metric-value" id="dashPlan">—</div>
+            <div class="metric-sub" id="dashPlanSub">No plan active</div>
+          </div>
+          <div class="metric-card">
+            <div class="metric-label">Next Debit</div>
+            <div class="metric-value" id="dashNextDebit">—</div>
+            <div class="metric-sub">1st of next month</div>
+          </div>
+          <div class="metric-card">
+            <div class="metric-label">Total Orders</div>
+            <div class="metric-value" id="dashOrders">0</div>
+            <div class="metric-sub">All time</div>
+          </div>
+          <div class="metric-card">
+            <div class="metric-label">Total Spent</div>
+            <div class="metric-value" id="dashSpent">R0</div>
+            <div class="metric-sub">Lifetime value</div>
           </div>
         </div>
-      </div>
-      <div class="contact-item">
-        <div class="contact-icon">✉️</div>
-        <div>
-          <div class="contact-info-label">Email</div>
-          <div class="contact-info-value">
-            <a href="mailto:pheaganereuben@gmail.com">pheaganereuben@gmail.com</a>
+
+        <div style="height:2px;"></div>
+
+        <div class="grid-2">
+          <div class="card">
+            <div class="section-head">
+              <div class="section-title">Recent Orders</div>
+              <button class="btn btn-ghost btn-sm" onclick="showPage('orders', document.querySelector('[onclick*=orders]'))">View all →</button>
+            </div>
+            <div id="dashRecentOrders">
+              <div style="color:var(--text-muted);font-size:13px;padding:16px 0;">No orders yet.</div>
+            </div>
+          </div>
+          <div class="card">
+            <div class="section-head">
+              <div class="section-title">Payment History</div>
+              <button class="btn btn-ghost btn-sm" onclick="showPage('payments', document.querySelector('[onclick*=payments]'))">View all →</button>
+            </div>
+            <div id="dashPayHistory">
+              <div style="color:var(--text-muted);font-size:13px;padding:16px 0;">No payments yet.</div>
+            </div>
           </div>
         </div>
-      </div>
-      <div class="contact-item">
-        <div class="contact-icon">📍</div>
-        <div>
-          <div class="contact-info-label">Address</div>
-          <div class="contact-info-value">
-            01 Boipusho Complex<br>
-            Paledi, Mankweng<br>
-            0727, Limpopo
+
+        <div style="height:2px;"></div>
+
+        <div class="card" id="dashMaintCard">
+          <div class="flex-between">
+            <div>
+              <div class="section-title mb-8">Maintenance Contract</div>
+              <div id="dashMaintStatus" style="font-size:13px;color:var(--text-muted);">You have no active maintenance plan.</div>
+            </div>
+            <button class="btn btn-red btn-sm" onclick="showPage('contract', document.querySelector('[onclick*=contract]'))">Subscribe</button>
           </div>
         </div>
       </div>
 
-      <div style="margin-top: 16px; padding: 28px; background: var(--black); border-left: 4px solid var(--red);">
-        <div style="font-family:'Barlow Condensed',sans-serif;font-size:12px;font-weight:700;letter-spacing:0.2em;text-transform:uppercase;color:var(--text-muted);margin-bottom:10px;">How To Order</div>
-        <p style="font-size:14px;color:rgba(245,240,232,0.7);line-height:1.7;">Find the part code and description from our catalogue, then send it to us via WhatsApp or email. We'll confirm availability and pricing immediately.</p>
+      <!-- ORDERS PAGE -->
+      <div class="page" id="page-orders">
+        <div class="section-head mb-24">
+          <div class="section-title">All Orders</div>
+          <button class="btn btn-red btn-sm" onclick="showPage('stoporder', document.querySelector('[onclick*=stoporder]'))">+ Place Order</button>
+        </div>
+        <div class="card">
+          <table class="data-table" id="ordersTable">
+            <thead>
+              <tr>
+                <th>Order ID</th>
+                <th>Parts</th>
+                <th>Amount</th>
+                <th>Status</th>
+                <th>Date</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody id="ordersTableBody">
+              <tr><td colspan="6" style="color:var(--text-muted);text-align:center;padding:32px;">No orders placed yet.</td></tr>
+            </tbody>
+          </table>
+        </div>
       </div>
-    </div>
 
-    <div class="order-form">
-      <div class="form-row">
-        <div class="form-group">
-          <label class="form-label">Your Name</label>
-          <input type="text" class="form-input" placeholder="Full name" id="fname">
+      <!-- STOP ORDER / NEW ORDER PAGE -->
+      <div class="page" id="page-stoporder">
+        <div class="section-title mb-24">Place a New Order</div>
+
+        <div class="grid-2" style="gap:24px;align-items:start;">
+          <!-- LEFT: Cart builder -->
+          <div>
+            <div class="card">
+              <div class="section-title mb-16">Build Your Order</div>
+              <div class="form-group">
+                <label class="form-label">Part Code</label>
+                <input class="form-input" placeholder="e.g. BP-CYL01" id="partCode">
+              </div>
+              <div class="form-group">
+                <label class="form-label">Part Description</label>
+                <input class="form-input" placeholder="e.g. GY6 150CC Barrel Kit" id="partDesc">
+              </div>
+              <div class="form-row">
+                <div class="form-group">
+                  <label class="form-label">Price (R)</label>
+                  <input class="form-input" type="number" placeholder="0" id="partPrice">
+                </div>
+                <div class="form-group">
+                  <label class="form-label">Qty</label>
+                  <input class="form-input" type="number" placeholder="1" id="partQty" value="1" min="1">
+                </div>
+              </div>
+              <button class="btn btn-outline btn-block" onclick="addPartToCart()">Add Part to Order</button>
+            </div>
+
+            <div class="card mt-8">
+              <div class="section-title mb-16">Quick Add — Popular Parts</div>
+              <div id="quickAddList">
+                <div class="order-row" style="padding:10px 0;">
+                  <div><div class="order-code">BP-CYL01</div><div class="order-name">GY6 150CC Barrel Kit</div></div>
+                  <button class="btn btn-ghost btn-sm" onclick="quickAdd('BP-CYL01','GY6 150CC Barrel Kit',690)">R690 +</button>
+                </div>
+                <div class="order-row" style="padding:10px 0;">
+                  <div><div class="order-code">BP-CARB02</div><div class="order-name">GY6 125/150CC Carb</div></div>
+                  <button class="btn btn-ghost btn-sm" onclick="quickAdd('BP-CARB02','GY6 Carburettor',550)">R550 +</button>
+                </div>
+                <div class="order-row" style="padding:10px 0;">
+                  <div><div class="order-code">BP-CDI01</div><div class="order-name">GY6 AC CDI Unit</div></div>
+                  <button class="btn btn-ghost btn-sm" onclick="quickAdd('BP-CDI01','GY6 AC CDI',180)">R180 +</button>
+                </div>
+                <div class="order-row" style="padding:10px 0;">
+                  <div><div class="order-code">BP-PADS01</div><div class="order-name">Universal Brake Pads FA86</div></div>
+                  <button class="btn btn-ghost btn-sm" onclick="quickAdd('BP-PADS01','Universal Brake Pads FA86',130)">R130 +</button>
+                </div>
+                <div class="order-row" style="padding:10px 0;">
+                  <div><div class="order-code">BP-CHAIN01</div><div class="order-name">428H 136L High-Q Chain</div></div>
+                  <button class="btn btn-ghost btn-sm" onclick="quickAdd('BP-CHAIN01','428H 136L Chain',220)">R220 +</button>
+                </div>
+                <div class="order-row" style="padding:10px 0;">
+                  <div><div class="order-code">BP-STATOR01</div><div class="order-name">CG 8 Pole Stator</div></div>
+                  <button class="btn btn-ghost btn-sm" onclick="quickAdd('BP-STATOR01','CG 8 Pole Stator',400)">R400 +</button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- RIGHT: Cart & Payment -->
+          <div>
+            <div class="card">
+              <div class="section-title mb-16">Order Summary</div>
+              <div id="cartItems">
+                <div style="color:var(--text-muted);font-size:13px;padding:16px 0;text-align:center;">Your cart is empty.</div>
+              </div>
+              <div class="divider"></div>
+              <div class="flex-between mt-8">
+                <span class="text-xs">Subtotal</span>
+                <span id="cartSubtotal" style="font-family:'Black Han Sans',sans-serif;font-size:24px;color:var(--red);">R0</span>
+              </div>
+            </div>
+
+            <div class="card mt-8">
+              <div class="section-title mb-16">Payment Method</div>
+              <div class="pay-methods">
+                <div class="pay-method selected" id="pm-eft" onclick="selectPayMethod('eft')">
+                  <span class="pay-method-icon">🏦</span>
+                  <div class="pay-method-name">EFT</div>
+                </div>
+                <div class="pay-method" id="pm-card" onclick="selectPayMethod('card')">
+                  <span class="pay-method-icon">💳</span>
+                  <div class="pay-method-name">Card</div>
+                </div>
+                <div class="pay-method" id="pm-whatsapp" onclick="selectPayMethod('whatsapp')">
+                  <span class="pay-method-icon">💬</span>
+                  <div class="pay-method-name">WhatsApp</div>
+                </div>
+                <div class="pay-method" id="pm-cash" onclick="selectPayMethod('cash')">
+                  <span class="pay-method-icon">💵</span>
+                  <div class="pay-method-name">Cash COD</div>
+                </div>
+              </div>
+
+              <!-- EFT Details -->
+              <div id="pm-detail-eft">
+                <div class="info-box text-sm">
+                  <div style="font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:700;letter-spacing:0.2em;text-transform:uppercase;color:#818cf8;margin-bottom:8px;">EFT Banking Details</div>
+                  <div style="color:var(--text-dim);font-size:12px;line-height:1.9;">
+                    Bank: <strong style="color:var(--white);">FNB</strong><br>
+                    Account Name: <strong style="color:var(--white);">Kgoba's Motorcycle Spares</strong><br>
+                    Account Number: <strong style="color:var(--white);">62XXXXXXXXX</strong><br>
+                    Branch Code: <strong style="color:var(--white);">250655</strong><br>
+                    Reference: <strong style="color:var(--white);">Your name + Order ID</strong>
+                  </div>
+                </div>
+              </div>
+              <!-- Card Details -->
+              <div id="pm-detail-card" style="display:none;">
+                <div class="form-group">
+                  <label class="form-label">Card Number</label>
+                  <input class="form-input" placeholder="1234 5678 9012 3456" maxlength="19" id="cardNum">
+                </div>
+                <div class="form-row">
+                  <div class="form-group">
+                    <label class="form-label">Expiry</label>
+                    <input class="form-input" placeholder="MM/YY" maxlength="5" id="cardExp">
+                  </div>
+                  <div class="form-group">
+                    <label class="form-label">CVV</label>
+                    <input class="form-input" placeholder="123" maxlength="3" id="cardCvv" type="password">
+                  </div>
+                </div>
+              </div>
+              <!-- WhatsApp -->
+              <div id="pm-detail-whatsapp" style="display:none;">
+                <div class="warning-box text-sm">
+                  <div style="font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:700;letter-spacing:0.2em;text-transform:uppercase;color:#f59e0b;margin-bottom:6px;">WhatsApp Order</div>
+                  <div style="color:var(--text-dim);font-size:12px;">Your order will be sent directly to Kgoba's WhatsApp (067 786 3332) for manual payment arrangement.</div>
+                </div>
+              </div>
+              <!-- Cash -->
+              <div id="pm-detail-cash" style="display:none;">
+                <div class="info-box text-sm">
+                  <div style="font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:700;letter-spacing:0.2em;text-transform:uppercase;color:#818cf8;margin-bottom:6px;">Cash on Delivery</div>
+                  <div style="color:var(--text-dim);font-size:12px;">Pay cash when you collect at 01 Boipusho Complex, Paledi, Mankweng 0727.</div>
+                </div>
+              </div>
+
+              <div class="form-group mt-16">
+                <label class="form-label">Delivery Address (optional)</label>
+                <input class="form-input" placeholder="Leave blank to collect in-store" id="deliveryAddr">
+              </div>
+              <div class="form-group">
+                <label class="form-label">Notes</label>
+                <input class="form-input" placeholder="Special instructions..." id="orderNotes">
+              </div>
+
+              <button class="btn btn-red btn-block mt-8" onclick="placeOrder()" style="padding:16px;">Confirm & Place Order →</button>
+            </div>
+          </div>
         </div>
-        <div class="form-group">
-          <label class="form-label">Phone / WhatsApp</label>
-          <input type="tel" class="form-input" placeholder="Your number" id="fphone">
+      </div>
+
+      <!-- MAINTENANCE CONTRACT PAGE -->
+      <div class="page" id="page-contract">
+        <div class="section-title mb-8">Maintenance Plans</div>
+        <p style="font-size:13px;color:var(--text-muted);margin-bottom:28px;">Subscribe to a monthly maintenance contract. You're debited on the <strong style="color:var(--white);">1st of every month</strong>. Cancel anytime before the 25th to avoid the next debit.</p>
+
+        <div class="plan-grid" id="planGrid">
+          <div class="plan-card selected" onclick="selectPlan('Basic', 299)" id="plan-Basic">
+            <div class="plan-name">Basic</div>
+            <div class="plan-price">R299<small>/mo</small></div>
+            <div class="plan-desc">Essential monthly checks for daily commuter bikes.</div>
+            <ul class="plan-features">
+              <li>Monthly oil check & top-up</li>
+              <li>Tyre pressure & condition</li>
+              <li>Brake inspection</li>
+              <li>Chain lubrication</li>
+              <li>10% off parts orders</li>
+            </ul>
+          </div>
+          <div class="plan-card popular" onclick="selectPlan('Standard', 549)" id="plan-Standard">
+            <div class="plan-name">Standard</div>
+            <div class="plan-price">R549<small>/mo</small></div>
+            <div class="plan-desc">Full monthly service keeping your bike in top shape.</div>
+            <ul class="plan-features">
+              <li>Everything in Basic</li>
+              <li>Full safety inspection</li>
+              <li>Spark plug check</li>
+              <li>Air filter inspection</li>
+              <li>Carburetor adjustment</li>
+              <li>15% off parts orders</li>
+              <li>Priority WhatsApp support</li>
+            </ul>
+          </div>
+          <div class="plan-card" onclick="selectPlan('Premium', 999)" id="plan-Premium">
+            <div class="plan-name">Premium</div>
+            <div class="plan-price">R999<small>/mo</small></div>
+            <div class="plan-desc">Complete protection + priority parts & labour.</div>
+            <ul class="plan-features">
+              <li>Everything in Standard</li>
+              <li>Full engine diagnostic</li>
+              <li>Electrical system check</li>
+              <li>Valve clearance check</li>
+              <li>2 free labour hours/month</li>
+              <li>20% off all parts</li>
+              <li>Emergency callout</li>
+              <li>Free bike pickup & drop-off</li>
+            </ul>
+          </div>
         </div>
+
+        <div class="card" id="subscribeCard">
+          <div class="section-title mb-16">Subscribe — Stop Order Setup</div>
+          <div class="flex-between mb-16">
+            <div>
+              <div style="font-size:13px;">Selected plan: <strong id="selectedPlanName" style="color:var(--red);">Basic</strong></div>
+              <div style="font-size:12px;color:var(--text-muted);margin-top:4px;">Debited on the 1st of every month. Cancel before the 25th to avoid next charge.</div>
+            </div>
+            <div style="font-family:'Black Han Sans',sans-serif;font-size:32px;color:var(--red);" id="selectedPlanPrice">R299/mo</div>
+          </div>
+
+          <div class="section-title mb-12">Debit Payment Method</div>
+          <div class="pay-methods" style="grid-template-columns:repeat(3,1fr);">
+            <div class="pay-method selected" id="cpm-debit" onclick="selectContractPay('debit')">
+              <span class="pay-method-icon">🏦</span>
+              <div class="pay-method-name">Debit Order</div>
+            </div>
+            <div class="pay-method" id="cpm-card" onclick="selectContractPay('card')">
+              <span class="pay-method-icon">💳</span>
+              <div class="pay-method-name">Card</div>
+            </div>
+            <div class="pay-method" id="cpm-eft" onclick="selectContractPay('eft')">
+              <span class="pay-method-icon">📱</span>
+              <div class="pay-method-name">Manual EFT</div>
+            </div>
+          </div>
+
+          <div id="contract-pay-detail">
+            <div class="form-row mt-16">
+              <div class="form-group">
+                <label class="form-label">Bank Name</label>
+                <select class="form-select" id="bankName">
+                  <option>FNB</option><option>Standard Bank</option><option>ABSA</option><option>Nedbank</option><option>Capitec</option><option>African Bank</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label class="form-label">Account Type</label>
+                <select class="form-select" id="accType">
+                  <option>Cheque / Current</option><option>Savings</option><option>Transmission</option>
+                </select>
+              </div>
+            </div>
+            <div class="form-row">
+              <div class="form-group">
+                <label class="form-label">Account Number</label>
+                <input class="form-input" placeholder="Your account number" id="accNum">
+              </div>
+              <div class="form-group">
+                <label class="form-label">Branch Code</label>
+                <input class="form-input" placeholder="Branch code" id="branchCode">
+              </div>
+            </div>
+          </div>
+
+          <div class="warning-box mt-16">
+            <div style="font-family:'Barlow Condensed',sans-serif;font-size:10px;font-weight:700;letter-spacing:0.2em;text-transform:uppercase;color:#f59e0b;margin-bottom:6px;">Stop Order Terms</div>
+            <ul style="font-size:12px;color:var(--text-dim);line-height:1.9;padding-left:16px;">
+              <li>You authorise Kgoba's to debit your account on the 1st of each month.</li>
+              <li>Cancel before the 25th of the month to stop the next debit.</li>
+              <li>Cancellation takes effect at the end of the billing period.</li>
+              <li>No refunds for partial months.</li>
+            </ul>
+          </div>
+
+          <div id="currentPlanActions" style="display:none;" class="danger-box mt-16">
+            <div style="font-family:'Barlow Condensed',sans-serif;font-size:10px;font-weight:700;letter-spacing:0.2em;text-transform:uppercase;color:var(--red);margin-bottom:8px;">Active Plan</div>
+            <div style="font-size:13px;margin-bottom:12px;" id="activePlanDesc">You're on the Standard plan at R549/mo.</div>
+            <button class="btn btn-danger btn-sm" onclick="openCancelModal('contract')">Cancel Maintenance Plan</button>
+          </div>
+
+          <button class="btn btn-red btn-block mt-16" style="padding:16px;" onclick="subscribeContract()" id="subscribeBtn">
+            Confirm Stop Order →
+          </button>
+        </div>
+      </div>
+
+      <!-- PAYMENTS PAGE -->
+      <div class="page" id="page-payments">
+        <div class="grid-2" style="gap:24px;align-items:start;">
+          <div>
+            <div class="section-title mb-16">Saved Payment Methods</div>
+            <div id="savedMethods">
+              <div style="color:var(--text-muted);font-size:13px;padding:16px 0;">No saved methods.</div>
+            </div>
+            <button class="btn btn-outline btn-sm mt-16" onclick="openAddCardModal()">+ Add Payment Method</button>
+
+            <div class="section-title mt-32 mb-16">Payment History</div>
+            <div class="card">
+              <table class="data-table">
+                <thead><tr><th>Date</th><th>Description</th><th>Amount</th><th>Status</th></tr></thead>
+                <tbody id="payHistoryFull">
+                  <tr><td colspan="4" style="color:var(--text-muted);text-align:center;padding:24px;">No payment history yet.</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <div>
+            <div class="section-title mb-16">Stop Order Schedule</div>
+            <div class="card" id="stopOrderSchedule">
+              <div style="color:var(--text-muted);font-size:13px;padding:8px 0;">No active stop order.</div>
+            </div>
+
+            <div class="section-title mt-32 mb-16">Next Debit</div>
+            <div class="card" id="nextDebitCard">
+              <div style="color:var(--text-muted);font-size:13px;">No upcoming debits.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- PROFILE PAGE -->
+      <div class="page" id="page-profile">
+        <div class="grid-2" style="gap:24px;align-items:start;">
+          <div class="card">
+            <div class="section-title mb-24">Personal Details</div>
+            <div class="form-row">
+              <div class="form-group">
+                <label class="form-label">First Name</label>
+                <input class="form-input" id="profFirst">
+              </div>
+              <div class="form-group">
+                <label class="form-label">Last Name</label>
+                <input class="form-input" id="profLast">
+              </div>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Email</label>
+              <input class="form-input" type="email" id="profEmail">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Phone / WhatsApp</label>
+              <input class="form-input" id="profPhone">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Bike Model(s)</label>
+              <input class="form-input" id="profBike" placeholder="e.g. Honda CG 150">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Address</label>
+              <input class="form-input" id="profAddress" placeholder="Your address">
+            </div>
+            <button class="btn btn-red mt-8" onclick="saveProfile()">Save Changes</button>
+          </div>
+
+          <div>
+            <div class="card">
+              <div class="section-title mb-16">Security</div>
+              <div class="form-group">
+                <label class="form-label">Current Password</label>
+                <input class="form-input" type="password" placeholder="••••••••" id="oldPass">
+              </div>
+              <div class="form-group">
+                <label class="form-label">New Password</label>
+                <input class="form-input" type="password" placeholder="••••••••" id="newPass">
+              </div>
+              <button class="btn btn-outline btn-sm mt-8" onclick="changePassword()">Update Password</button>
+            </div>
+
+            <div class="card mt-8">
+              <div class="section-title mb-16">Notification Preferences</div>
+              <div style="display:flex;flex-direction:column;gap:14px;" id="notifPrefs">
+                <label style="display:flex;align-items:center;gap:10px;font-size:13px;cursor:pointer;">
+                  <input type="checkbox" checked id="notifOrders" style="accent-color:var(--red);">
+                  Order status updates
+                </label>
+                <label style="display:flex;align-items:center;gap:10px;font-size:13px;cursor:pointer;">
+                  <input type="checkbox" checked id="notifPayment" style="accent-color:var(--red);">
+                  Payment reminders
+                </label>
+                <label style="display:flex;align-items:center;gap:10px;font-size:13px;cursor:pointer;">
+                  <input type="checkbox" checked id="notifMaint" style="accent-color:var(--red);">
+                  Maintenance appointment reminders
+                </label>
+                <label style="display:flex;align-items:center;gap:10px;font-size:13px;cursor:pointer;">
+                  <input type="checkbox" id="notifPromo" style="accent-color:var(--red);">
+                  Promotions & price drops
+                </label>
+              </div>
+            </div>
+
+            <div class="card mt-8">
+              <div class="section-title mb-12">Danger Zone</div>
+              <p style="font-size:12px;color:var(--text-muted);margin-bottom:16px;">Cancelling your account removes all data and stops any active plans.</p>
+              <button class="btn btn-danger btn-sm" onclick="openCancelModal('account')">Cancel Account</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /content -->
+  </main>
+</div>
+
+<!-- CANCEL MODAL -->
+<div class="modal-backdrop" id="cancelModal">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title" id="cancelModalTitle">Cancel Maintenance Plan</div>
+      <button class="modal-close" onclick="closeModal('cancelModal')">×</button>
+    </div>
+    <div class="modal-body">
+      <div class="danger-box mb-16">
+        <div id="cancelWarningText" style="font-size:13px;color:var(--white);line-height:1.7;">Are you sure you want to cancel? This action cannot be undone.</div>
       </div>
       <div class="form-group">
-        <label class="form-label">Bike Model</label>
-        <input type="text" class="form-input" placeholder="e.g. Honda CG 150, GY6 125..." id="fbike">
+        <label class="form-label">Reason for Cancellation (optional)</label>
+        <select class="form-select" id="cancelReason">
+          <option value="">Select a reason...</option>
+          <option>Too expensive</option>
+          <option>No longer need it</option>
+          <option>Switching to another provider</option>
+          <option>Not satisfied with service</option>
+          <option>Selling my bike</option>
+          <option>Other</option>
+        </select>
+      </div>
+      <p style="font-size:12px;color:var(--text-muted);" id="cancelNoteText">Cancellation takes effect at end of current billing period.</p>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost btn-sm" onclick="closeModal('cancelModal')">Keep Plan</button>
+      <button class="btn btn-danger btn-sm" onclick="confirmCancel()" id="confirmCancelBtn">Confirm Cancellation</button>
+    </div>
+  </div>
+</div>
+
+<!-- ORDER CANCEL MODAL -->
+<div class="modal-backdrop" id="orderCancelModal">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title">Cancel Order</div>
+      <button class="modal-close" onclick="closeModal('orderCancelModal')">×</button>
+    </div>
+    <div class="modal-body">
+      <div class="warning-box mb-16">
+        <div style="font-size:13px;color:var(--white);line-height:1.7;">Cancel order <strong id="cancelOrderId"></strong>? This will notify Kgoba's immediately via WhatsApp.</div>
       </div>
       <div class="form-group">
-        <label class="form-label">Parts Needed</label>
-        <textarea class="form-textarea" placeholder="List the part codes or describe what you need..." id="fparts"></textarea>
+        <label class="form-label">Reason</label>
+        <select class="form-select" id="orderCancelReason">
+          <option>Changed my mind</option>
+          <option>Found the part elsewhere</option>
+          <option>Ordered by mistake</option>
+          <option>Other</option>
+        </select>
       </div>
-      <button class="btn-primary" style="width:100%;padding:18px;" onclick="sendOrder()">
-        Send Order via WhatsApp →
-      </button>
-      <p style="font-size:12px;color:var(--text-muted);margin-top:14px;text-align:center;">Or email us at pheaganereuben@gmail.com</p>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost btn-sm" onclick="closeModal('orderCancelModal')">Keep Order</button>
+      <button class="btn btn-danger btn-sm" onclick="confirmOrderCancel()">Cancel Order</button>
     </div>
   </div>
-</section>
+</div>
 
-<!-- FOOTER -->
-<footer>
-  <div class="footer-top">
-    <div>
-      <div class="footer-logo">KGOBA<span>'</span>S</div>
-      <div class="footer-tagline">Motorcycle Spares & Maintenance</div>
+<!-- ADD CARD MODAL -->
+<div class="modal-backdrop" id="addCardModal">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title">Add Payment Method</div>
+      <button class="modal-close" onclick="closeModal('addCardModal')">×</button>
     </div>
-    <div class="footer-links">
-      <div class="footer-col">
-        <div class="footer-col-title">Categories</div>
-        <ul>
-          <li><a href="#categories">Engine & Internals</a></li>
-          <li><a href="#categories">Brakes & Tyres</a></li>
-          <li><a href="#categories">Electrical</a></li>
-          <li><a href="#categories">Drive Train</a></li>
-          <li><a href="#categories">Bodywork</a></li>
-        </ul>
+    <div class="modal-body">
+      <div class="pay-methods" style="grid-template-columns:repeat(3,1fr);margin-bottom:20px;">
+        <div class="pay-method selected" id="am-eft" onclick="selectAddMethod('eft')">
+          <span class="pay-method-icon">🏦</span>
+          <div class="pay-method-name">EFT</div>
+        </div>
+        <div class="pay-method" id="am-card" onclick="selectAddMethod('card')">
+          <span class="pay-method-icon">💳</span>
+          <div class="pay-method-name">Card</div>
+        </div>
+        <div class="pay-method" id="am-whatsapp" onclick="selectAddMethod('whatsapp')">
+          <span class="pay-method-icon">💬</span>
+          <div class="pay-method-name">WhatsApp</div>
+        </div>
       </div>
-      <div class="footer-col">
-        <div class="footer-col-title">Brands</div>
-        <ul>
-          <li><a href="#products">Honda CG / XR</a></li>
-          <li><a href="#products">GY6 Scooters</a></li>
-          <li><a href="#products">Yamaha YBR</a></li>
-          <li><a href="#products">ACE / Velocity</a></li>
-          <li><a href="#products">Linhai ATV</a></li>
-        </ul>
+      <div id="am-detail-eft">
+        <div class="form-group">
+          <label class="form-label">Bank</label>
+          <select class="form-select" id="am-bank">
+            <option>FNB</option><option>Standard Bank</option><option>ABSA</option><option>Nedbank</option><option>Capitec</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Account Number</label>
+          <input class="form-input" placeholder="Your account number" id="am-accnum">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Branch Code</label>
+          <input class="form-input" placeholder="Branch code" id="am-branch">
+        </div>
       </div>
-      <div class="footer-col">
-        <div class="footer-col-title">Contact</div>
-        <ul>
-          <li><a href="https://wa.me/27677863332">WhatsApp Us</a></li>
-          <li><a href="mailto:pheaganereuben@gmail.com">Email Us</a></li>
-          <li><a href="#about">About</a></li>
-        </ul>
+      <div id="am-detail-card" style="display:none;">
+        <div class="form-group">
+          <label class="form-label">Card Number</label>
+          <input class="form-input" placeholder="1234 5678 9012 3456" id="am-cardnum">
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Expiry</label>
+            <input class="form-input" placeholder="MM/YY" id="am-exp">
+          </div>
+          <div class="form-group">
+            <label class="form-label">CVV</label>
+            <input class="form-input" placeholder="123" type="password" id="am-cvv">
+          </div>
+        </div>
       </div>
+      <div id="am-detail-whatsapp" style="display:none;">
+        <div class="warning-box">
+          <div style="font-size:13px;color:var(--white);">WhatsApp payments are arranged directly. No card details needed.</div>
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost btn-sm" onclick="closeModal('addCardModal')">Cancel</button>
+      <button class="btn btn-red btn-sm" onclick="savePayMethod()">Save Method</button>
     </div>
   </div>
-  <div class="footer-bottom">
-    <div class="footer-copy">© 2024 Kgoba's Motorcycle Spares & Maintenance. Mankweng, Limpopo.</div>
-    <div class="footer-address">01 Boipusho Complex, Paledi, Mankweng 0727</div>
-  </div>
-</footer>
+</div>
 
-<!-- ORDER NOTIFICATION -->
-<div id="orderNotif" style="
-  position: fixed;
-  bottom: 30px;
-  right: 30px;
-  background: var(--red);
-  color: white;
-  padding: 16px 24px;
-  font-family: 'Barlow Condensed', sans-serif;
-  font-size: 14px;
-  font-weight: 700;
-  letter-spacing: 0.15em;
-  text-transform: uppercase;
-  transform: translateY(100px);
-  opacity: 0;
-  transition: all 0.4s cubic-bezier(0.4,0,0.2,1);
-  z-index: 500;
-  max-width: 300px;
-  line-height: 1.4;
-">Part added to order list!</div>
+<!-- TOAST -->
+<div class="toast" id="toast">
+  <div class="toast-title" id="toastTitle">Success</div>
+  <div class="toast-msg" id="toastMsg"></div>
+</div>
 
 <script>
-  // CURSOR
-  const cursor = document.getElementById('cursor');
-  const ring = document.getElementById('cursorRing');
-  let mx = 0, my = 0;
-  document.addEventListener('mousemove', e => {
-    mx = e.clientX; my = e.clientY;
-    cursor.style.left = mx + 'px';
-    cursor.style.top = my + 'px';
-    setTimeout(() => {
-      ring.style.left = mx + 'px';
-      ring.style.top = my + 'px';
-    }, 80);
-  });
+// ─── STATE ───────────────────────────────────────────────────────────────────
+let state = {
+  user: null,
+  cart: [],
+  orders: [],
+  contract: null,
+  payMethods: [],
+  payments: [],
+  selectedPlan: { name: 'Basic', price: 299 },
+  selectedPayMethod: 'eft',
+  selectedContractPay: 'debit',
+  cancelTarget: null,
+  cancelOrderTarget: null,
+  addMethod: 'eft'
+};
 
-  // NAV SCROLL
-  window.addEventListener('scroll', () => {
-    document.getElementById('navbar').classList.toggle('scrolled', window.scrollY > 80);
-  });
+// ─── AUTH ─────────────────────────────────────────────────────────────────────
+function doLogin() {
+  const email = document.getElementById('loginEmail').value;
+  const pass = document.getElementById('loginPass').value;
+  if (!email || !pass) { toast('Error', 'Please fill in all fields.', true); return; }
+  state.user = { first: 'Reuben', last: 'Pheagane', email, phone: '067 786 3332', bike: 'Honda CG 150', address: '' };
+  enterPortal();
+}
 
-  // FILTER
-  function filterProducts(cat, btn) {
-    document.querySelectorAll('.filter-tab').forEach(t => t.classList.remove('active'));
-    btn.classList.add('active');
-    document.querySelectorAll('.product-card').forEach(card => {
-      const show = cat === 'all' || card.dataset.cat === cat;
-      card.style.display = show ? 'block' : 'none';
-    });
+function doRegister() {
+  const first = document.getElementById('regFirst').value;
+  const last = document.getElementById('regLast').value;
+  const email = document.getElementById('regEmail').value;
+  const phone = document.getElementById('regPhone').value;
+  const bike = document.getElementById('regBike').value;
+  if (!first || !last || !email) { toast('Error', 'Please fill in required fields.', true); return; }
+  state.user = { first, last, email, phone, bike, address: '' };
+  enterPortal();
+}
+
+function enterPortal() {
+  document.getElementById('authScreen').style.display = 'none';
+  document.getElementById('portalApp').style.display = 'flex';
+  updateSidebar();
+  updateDashboard();
+  toast('Welcome!', `Signed in as ${state.user.first} ${state.user.last}.`);
+}
+
+function doLogout() {
+  state.user = null;
+  document.getElementById('authScreen').style.display = 'flex';
+  document.getElementById('portalApp').style.display = 'none';
+  showLogin();
+}
+
+function showLogin() {
+  document.getElementById('loginForm').style.display = 'block';
+  document.getElementById('registerForm').style.display = 'none';
+}
+function showRegister() {
+  document.getElementById('loginForm').style.display = 'none';
+  document.getElementById('registerForm').style.display = 'block';
+}
+
+// ─── NAVIGATION ───────────────────────────────────────────────────────────────
+const pageTitles = { dashboard: 'Dashboard', orders: 'My Orders', stoporder: 'Place Order', contract: 'Maintenance Plan', payments: 'Billing & Payments', profile: 'Profile' };
+
+function showPage(name, el) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  document.getElementById('page-' + name).classList.add('active');
+  if (el) el.classList.add('active');
+  document.getElementById('topbarTitle').textContent = pageTitles[name] || name;
+  if (name === 'profile') loadProfile();
+  if (name === 'payments') renderPayments();
+  if (name === 'dashboard') updateDashboard();
+}
+
+// ─── SIDEBAR / DASHBOARD ──────────────────────────────────────────────────────
+function updateSidebar() {
+  const u = state.user;
+  if (!u) return;
+  const initials = (u.first[0] + u.last[0]).toUpperCase();
+  document.getElementById('sidebarAvatar').textContent = initials;
+  document.getElementById('sidebarName').textContent = u.first + ' ' + u.last[0] + '.';
+  document.getElementById('sidebarEmail').textContent = u.email;
+}
+
+function updateDashboard() {
+  const total = state.orders.reduce((s, o) => s + o.total, 0);
+  document.getElementById('dashOrders').textContent = state.orders.length;
+  document.getElementById('dashSpent').textContent = 'R' + total;
+
+  if (state.contract && state.contract.active) {
+    document.getElementById('dashPlan').textContent = state.contract.plan;
+    document.getElementById('dashPlanSub').textContent = 'R' + state.contract.price + '/month';
+    document.getElementById('dashNextDebit').textContent = 'R' + state.contract.price;
+    document.getElementById('dashMaintStatus').textContent = `Active: ${state.contract.plan} plan at R${state.contract.price}/mo. Next debit: 1st.`;
+    document.querySelector('#dashMaintCard button').textContent = 'Manage Plan';
+  } else {
+    document.getElementById('dashPlan').textContent = '—';
+    document.getElementById('dashPlanSub').textContent = 'No plan active';
+    document.getElementById('dashNextDebit').textContent = '—';
   }
 
-  // ORDER
-  let orderList = [];
-  function addToOrder(item) {
-    orderList.push(item);
-    const n = document.getElementById('orderNotif');
-    n.textContent = `Added: ${item.split(' — ')[1]}`;
-    n.style.transform = 'translateY(0)';
-    n.style.opacity = '1';
-    setTimeout(() => {
-      n.style.transform = 'translateY(100px)';
-      n.style.opacity = '0';
-    }, 2500);
+  // Recent orders
+  const el = document.getElementById('dashRecentOrders');
+  if (state.orders.length === 0) {
+    el.innerHTML = '<div style="color:var(--text-muted);font-size:13px;padding:16px 0;">No orders yet.</div>';
+  } else {
+    el.innerHTML = state.orders.slice(-3).reverse().map(o => `
+      <div class="order-row">
+        <div><div class="order-code">${o.id}</div><div class="order-name">${o.items.length} part(s)</div></div>
+        <div style="display:flex;align-items:center;gap:12px;">
+          <span class="order-price">R${o.total}</span>
+          <span class="badge badge-${o.status === 'Confirmed' ? 'active' : o.status === 'Cancelled' ? 'cancelled' : 'pending'}">${o.status}</span>
+        </div>
+      </div>`).join('');
   }
 
-  function sendOrder() {
-    const name = document.getElementById('fname').value || 'Customer';
-    const phone = document.getElementById('fphone').value || '';
-    const bike = document.getElementById('fbike').value || '';
-    const parts = document.getElementById('fparts').value || '';
+  // Pay history
+  const ph = document.getElementById('dashPayHistory');
+  if (state.payments.length === 0) {
+    ph.innerHTML = '<div style="color:var(--text-muted);font-size:13px;padding:16px 0;">No payments yet.</div>';
+  } else {
+    ph.innerHTML = state.payments.slice(-3).reverse().map(p => `
+      <div class="order-row">
+        <div><div class="order-code">${p.ref}</div><div class="order-name">${p.desc}</div></div>
+        <span class="order-price">R${p.amount}</span>
+      </div>`).join('');
+  }
+}
 
-    const extra = orderList.length ? '\n\nADDED FROM SITE:\n' + orderList.join('\n') : '';
+// ─── CART ─────────────────────────────────────────────────────────────────────
+function addPartToCart() {
+  const code = document.getElementById('partCode').value.trim();
+  const desc = document.getElementById('partDesc').value.trim();
+  const price = parseFloat(document.getElementById('partPrice').value) || 0;
+  const qty = parseInt(document.getElementById('partQty').value) || 1;
+  if (!desc || price <= 0) { toast('Missing Info', 'Enter a part description and price.', true); return; }
+  state.cart.push({ code: code || '—', name: desc, price, qty });
+  document.getElementById('partCode').value = '';
+  document.getElementById('partDesc').value = '';
+  document.getElementById('partPrice').value = '';
+  document.getElementById('partQty').value = '1';
+  renderCart();
+  toast('Added', `${desc} added to order.`);
+}
 
-    const msg = encodeURIComponent(
-      `Hello Kgoba's,\n\nName: ${name}\nPhone: ${phone}\nBike: ${bike}\n\nParts needed:\n${parts}${extra}\n\nPlease advise availability.`
-    );
+function quickAdd(code, name, price) {
+  state.cart.push({ code, name, price, qty: 1 });
+  renderCart();
+  toast('Added', `${name} added to order.`);
+}
+
+function removeFromCart(i) {
+  state.cart.splice(i, 1);
+  renderCart();
+}
+
+function renderCart() {
+  const el = document.getElementById('cartItems');
+  const total = state.cart.reduce((s, i) => s + i.price * i.qty, 0);
+  if (state.cart.length === 0) {
+    el.innerHTML = '<div style="color:var(--text-muted);font-size:13px;padding:16px 0;text-align:center;">Your cart is empty.</div>';
+  } else {
+    el.innerHTML = state.cart.map((item, i) => `
+      <div class="order-row">
+        <div>
+          <div class="order-code">${item.code}</div>
+          <div class="order-name">${item.name} × ${item.qty}</div>
+        </div>
+        <div style="display:flex;align-items:center;gap:10px;">
+          <span class="order-price">R${item.price * item.qty}</span>
+          <button class="btn btn-ghost btn-sm" onclick="removeFromCart(${i})" style="color:var(--red);padding:4px 8px;">✕</button>
+        </div>
+      </div>`).join('');
+  }
+  document.getElementById('cartSubtotal').textContent = 'R' + total;
+}
+
+// ─── PAYMENT METHOD SELECTION ─────────────────────────────────────────────────
+function selectPayMethod(m) {
+  state.selectedPayMethod = m;
+  ['eft','card','whatsapp','cash'].forEach(x => {
+    document.getElementById('pm-' + x).classList.toggle('selected', x === m);
+    document.getElementById('pm-detail-' + x).style.display = x === m ? 'block' : 'none';
+  });
+}
+
+function selectContractPay(m) {
+  state.selectedContractPay = m;
+  ['debit','card','eft'].forEach(x => {
+    document.getElementById('cpm-' + x).classList.toggle('selected', x === m);
+  });
+  document.getElementById('contract-pay-detail').style.display = m === 'whatsapp' ? 'none' : 'block';
+}
+
+function selectAddMethod(m) {
+  state.addMethod = m;
+  ['eft','card','whatsapp'].forEach(x => {
+    document.getElementById('am-' + x).classList.toggle('selected', x === m);
+    document.getElementById('am-detail-' + x).style.display = x === m ? 'block' : 'none';
+  });
+}
+
+// ─── PLACE ORDER ──────────────────────────────────────────────────────────────
+function placeOrder() {
+  if (state.cart.length === 0) { toast('Empty Cart', 'Add at least one part to your order.', true); return; }
+  const total = state.cart.reduce((s, i) => s + i.price * i.qty, 0);
+  const id = 'KG-' + Date.now().toString().slice(-6);
+  const order = { id, items: [...state.cart], total, status: 'Confirmed', date: new Date().toLocaleDateString('en-ZA'), method: state.selectedPayMethod };
+  state.orders.push(order);
+  state.payments.push({ ref: id, desc: 'Parts Order', amount: total, date: order.date, status: 'Paid' });
+  state.cart = [];
+  renderCart();
+  renderOrdersTable();
+  updateDashboard();
+
+  if (state.selectedPayMethod === 'whatsapp') {
+    const msg = encodeURIComponent(`*New Order ${id}*\n\nFrom: ${state.user.first} ${state.user.last}\nPhone: ${state.user.phone}\n\nParts:\n${order.items.map(i => `- ${i.code} ${i.name} x${i.qty} = R${i.price * i.qty}`).join('\n')}\n\nTotal: R${total}\nPayment: WhatsApp arrangement\n\nPlease confirm availability.`);
     window.open(`https://wa.me/27677863332?text=${msg}`, '_blank');
   }
 
-  // INTERSECTION OBSERVER — subtle entrance animations
-  const obs = new IntersectionObserver(entries => {
-    entries.forEach(e => {
-      if (e.isIntersecting) {
-        e.target.style.opacity = '1';
-        e.target.style.transform = 'translateY(0)';
-      }
-    });
-  }, { threshold: 0.1 });
+  toast('Order Placed!', `Order ${id} confirmed — R${total}.`);
+  showPage('orders', document.querySelector('[onclick*=orders]'));
+}
 
-  document.querySelectorAll('.cat-card, .product-card, .stat-block, .feature-item, .contact-item').forEach(el => {
-    el.style.opacity = '0';
-    el.style.transform = 'translateY(24px)';
-    el.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
-    obs.observe(el);
-  });
+// ─── ORDERS TABLE ─────────────────────────────────────────────────────────────
+function renderOrdersTable() {
+  const tbody = document.getElementById('ordersTableBody');
+  if (state.orders.length === 0) {
+    tbody.innerHTML = '<tr><td colspan="6" style="color:var(--text-muted);text-align:center;padding:32px;">No orders placed yet.</td></tr>';
+    return;
+  }
+  tbody.innerHTML = state.orders.slice().reverse().map(o => `
+    <tr>
+      <td><span style="font-family:\'Barlow Condensed\',sans-serif;font-size:11px;font-weight:700;letter-spacing:0.15em;color:var(--red);">${o.id}</span></td>
+      <td>${o.items.map(i => i.name).join(', ').slice(0, 40)}${o.items.map(i=>i.name).join(', ').length > 40 ? '…' : ''}</td>
+      <td><strong style="color:var(--white);">R${o.total}</strong></td>
+      <td><span class="badge badge-${o.status === 'Confirmed' ? 'active' : o.status === 'Cancelled' ? 'cancelled' : 'pending'}">${o.status}</span></td>
+      <td style="color:var(--text-muted);">${o.date}</td>
+      <td>${o.status !== 'Cancelled' ? `<button class="btn btn-danger btn-sm" onclick="openOrderCancelModal('${o.id}')">Cancel</button>` : '<span style="color:var(--text-muted);font-size:12px;">Cancelled</span>'}</td>
+    </tr>`).join('');
+}
 
-  // GRID BACKGROUND FOR PRODUCT CARDS (placeholder)
-  document.querySelectorAll('.product-img-wrap').forEach(wrap => {
-    if (!wrap.querySelector('img') || wrap.querySelector('img').style.display === 'none') {
-      wrap.style.background = 'linear-gradient(135deg, #1e1e1e 0%, #2a2a2a 100%)';
-    }
+// ─── MAINTENANCE CONTRACT ─────────────────────────────────────────────────────
+function selectPlan(name, price) {
+  state.selectedPlan = { name, price };
+  ['Basic','Standard','Premium'].forEach(p => {
+    document.getElementById('plan-' + p).classList.toggle('selected', p === name);
   });
+  document.getElementById('selectedPlanName').textContent = name;
+  document.getElementById('selectedPlanPrice').textContent = 'R' + price + '/mo';
+}
+
+function subscribeContract() {
+  if (state.contract && state.contract.active) { toast('Already Active', 'You already have an active plan. Cancel first to change.', true); return; }
+  const start = new Date();
+  const next = new Date(start.getFullYear(), start.getMonth() + 1, 1);
+  state.contract = { plan: state.selectedPlan.name, price: state.selectedPlan.price, active: true, start: start.toLocaleDateString('en-ZA'), nextDebit: next.toLocaleDateString('en-ZA'), method: state.selectedContractPay };
+  updateDashboard();
+  renderPayments();
+  toast('Plan Active!', `${state.selectedPlan.name} plan at R${state.selectedPlan.price}/mo. First debit on 1st.`);
+  document.getElementById('currentPlanActions').style.display = 'block';
+  document.getElementById('subscribeBtn').textContent = 'Plan Active ✓';
+  document.getElementById('subscribeBtn').disabled = true;
+  document.getElementById('activePlanDesc').textContent = `You're on the ${state.contract.plan} plan at R${state.contract.price}/mo. Next debit: ${state.contract.nextDebit}.`;
+}
+
+// ─── PAYMENTS ─────────────────────────────────────────────────────────────────
+function renderPayments() {
+  // History table
+  const tbody = document.getElementById('payHistoryFull');
+  if (state.payments.length === 0) {
+    tbody.innerHTML = '<tr><td colspan="4" style="color:var(--text-muted);text-align:center;padding:24px;">No payment history yet.</td></tr>';
+  } else {
+    tbody.innerHTML = state.payments.slice().reverse().map(p => `
+      <tr>
+        <td style="color:var(--text-muted);">${p.date}</td>
+        <td>${p.desc}</td>
+        <td><strong>R${p.amount}</strong></td>
+        <td><span class="badge badge-paid">${p.status}</span></td>
+      </tr>`).join('');
+  }
+
+  // Stop order schedule
+  const so = document.getElementById('stopOrderSchedule');
+  if (state.contract && state.contract.active) {
+    so.innerHTML = `
+      <div class="flex-between mb-16">
+        <div>
+          <div style="font-size:15px;font-weight:500;">${state.contract.plan} Maintenance Plan</div>
+          <div style="font-size:12px;color:var(--text-muted);margin-top:4px;">Started ${state.contract.start}</div>
+        </div>
+        <span class="badge badge-active">Active</span>
+      </div>
+      <div class="flex-between">
+        <div class="text-xs">Monthly Amount</div>
+        <strong style="color:var(--red);font-family:\'Black Han Sans\',sans-serif;font-size:22px;">R${state.contract.price}</strong>
+      </div>
+      <div class="progress-bar mt-8"><div class="progress-fill" style="width:${Math.floor(new Date().getDate() / 30 * 100)}%"></div></div>
+      <div class="flex-between mt-8">
+        <span style="font-size:11px;color:var(--text-muted);">Billing cycle progress</span>
+        <span style="font-size:11px;color:var(--text-muted);">Next: ${state.contract.nextDebit}</span>
+      </div>
+      <div class="divider"></div>
+      <button class="btn btn-danger btn-sm" onclick="openCancelModal('contract')">Cancel Plan</button>`;
+  } else {
+    so.innerHTML = '<div style="color:var(--text-muted);font-size:13px;">No active stop order. <a onclick="showPage(\'contract\', document.querySelector(\'[onclick*=contract]\'))" style="color:var(--red);cursor:pointer;">Subscribe to a plan →</a></div>';
+  }
+
+  // Next debit
+  const nd = document.getElementById('nextDebitCard');
+  if (state.contract && state.contract.active) {
+    nd.innerHTML = `
+      <div style="font-size:13px;color:var(--text-muted);margin-bottom:12px;">Scheduled debit</div>
+      <div style="font-family:\'Black Han Sans\',sans-serif;font-size:36px;color:var(--red);">R${state.contract.price}</div>
+      <div style="font-size:13px;margin-top:8px;">on <strong>${state.contract.nextDebit}</strong> — ${state.contract.plan} Plan</div>
+      <div class="info-box mt-16">
+        <div style="font-size:12px;color:var(--text-dim);">Cancel before the 25th of this month to stop this debit.</div>
+      </div>`;
+  } else {
+    nd.innerHTML = '<div style="color:var(--text-muted);font-size:13px;">No upcoming debits.</div>';
+  }
+
+  // Saved methods
+  const sm = document.getElementById('savedMethods');
+  if (state.payMethods.length === 0) {
+    sm.innerHTML = '<div style="color:var(--text-muted);font-size:13px;padding:8px 0;">No saved methods.</div>';
+  } else {
+    sm.innerHTML = state.payMethods.map((m, i) => `
+      <div class="card" style="margin-bottom:2px;display:flex;align-items:center;justify-content:space-between;">
+        <div style="display:flex;align-items:center;gap:12px;">
+          <span style="font-size:22px;">${m.icon}</span>
+          <div>
+            <div style="font-size:13px;font-weight:500;">${m.label}</div>
+            <div style="font-size:11px;color:var(--text-muted);">${m.detail}</div>
+          </div>
+        </div>
+        <button class="btn btn-ghost btn-sm" onclick="removePayMethod(${i})" style="color:var(--red);">Remove</button>
+      </div>`).join('');
+  }
+}
+
+function removePayMethod(i) {
+  state.payMethods.splice(i, 1);
+  renderPayments();
+  toast('Removed', 'Payment method removed.');
+}
+
+// ─── PROFILE ──────────────────────────────────────────────────────────────────
+function loadProfile() {
+  const u = state.user;
+  if (!u) return;
+  document.getElementById('profFirst').value = u.first || '';
+  document.getElementById('profLast').value = u.last || '';
+  document.getElementById('profEmail').value = u.email || '';
+  document.getElementById('profPhone').value = u.phone || '';
+  document.getElementById('profBike').value = u.bike || '';
+  document.getElementById('profAddress').value = u.address || '';
+}
+
+function saveProfile() {
+  state.user.first = document.getElementById('profFirst').value;
+  state.user.last = document.getElementById('profLast').value;
+  state.user.email = document.getElementById('profEmail').value;
+  state.user.phone = document.getElementById('profPhone').value;
+  state.user.bike = document.getElementById('profBike').value;
+  state.user.address = document.getElementById('profAddress').value;
+  updateSidebar();
+  toast('Saved', 'Your profile has been updated.');
+}
+
+function changePassword() {
+  const old = document.getElementById('oldPass').value;
+  const nw = document.getElementById('newPass').value;
+  if (!old || !nw) { toast('Error', 'Fill in both password fields.', true); return; }
+  document.getElementById('oldPass').value = '';
+  document.getElementById('newPass').value = '';
+  toast('Updated', 'Password changed successfully.');
+}
+
+// ─── MODALS ───────────────────────────────────────────────────────────────────
+function openCancelModal(target) {
+  state.cancelTarget = target;
+  const modal = document.getElementById('cancelModal');
+  if (target === 'contract') {
+    document.getElementById('cancelModalTitle').textContent = 'Cancel Maintenance Plan';
+    document.getElementById('cancelWarningText').textContent = `Cancel your ${state.contract?.plan || ''} plan? You'll keep access until the end of the current billing period.`;
+    document.getElementById('cancelNoteText').textContent = 'Cancellation takes effect at end of current billing period. No refund for current month.';
+    document.getElementById('confirmCancelBtn').textContent = 'Cancel Plan';
+  } else {
+    document.getElementById('cancelModalTitle').textContent = 'Cancel Account';
+    document.getElementById('cancelWarningText').textContent = 'This will permanently delete your account and cancel all active plans. This cannot be undone.';
+    document.getElementById('cancelNoteText').textContent = 'All your data will be removed immediately.';
+    document.getElementById('confirmCancelBtn').textContent = 'Delete Account';
+  }
+  modal.classList.add('open');
+}
+
+function confirmCancel() {
+  if (state.cancelTarget === 'contract') {
+    state.contract = { ...state.contract, active: false };
+    toast('Cancelled', 'Your maintenance plan has been cancelled.');
+    document.getElementById('currentPlanActions').style.display = 'none';
+    document.getElementById('subscribeBtn').textContent = 'Confirm Stop Order →';
+    document.getElementById('subscribeBtn').disabled = false;
+    updateDashboard();
+    renderPayments();
+  } else if (state.cancelTarget === 'account') {
+    doLogout();
+    toast('Account Deleted', 'Your account has been removed.');
+  }
+  closeModal('cancelModal');
+}
+
+function openOrderCancelModal(id) {
+  state.cancelOrderTarget = id;
+  document.getElementById('cancelOrderId').textContent = id;
+  document.getElementById('orderCancelModal').classList.add('open');
+}
+
+function confirmOrderCancel() {
+  const order = state.orders.find(o => o.id === state.cancelOrderTarget);
+  if (order) { order.status = 'Cancelled'; }
+  renderOrdersTable();
+  updateDashboard();
+  closeModal('orderCancelModal');
+  toast('Order Cancelled', `Order ${state.cancelOrderTarget} has been cancelled.`);
+  const msg = encodeURIComponent(`Hi Kgoba's, I would like to cancel order ${state.cancelOrderTarget}. Reason: ${document.getElementById('orderCancelReason').value}`);
+  window.open(`https://wa.me/27677863332?text=${msg}`, '_blank');
+}
+
+function openAddCardModal() {
+  document.getElementById('addCardModal').classList.add('open');
+}
+
+function savePayMethod() {
+  const icons = { eft: '🏦', card: '💳', whatsapp: '💬' };
+  let label = '', detail = '';
+  if (state.addMethod === 'eft') {
+    label = document.getElementById('am-bank').value + ' EFT';
+    detail = document.getElementById('am-accnum').value ? '••' + document.getElementById('am-accnum').value.slice(-4) : 'No account number';
+  } else if (state.addMethod === 'card') {
+    label = 'Credit / Debit Card';
+    detail = document.getElementById('am-cardnum').value ? '•••• •••• •••• ' + document.getElementById('am-cardnum').value.slice(-4) : 'No card number';
+  } else {
+    label = 'WhatsApp Payment';
+    detail = '067 786 3332';
+  }
+  state.payMethods.push({ type: state.addMethod, icon: icons[state.addMethod], label, detail });
+  closeModal('addCardModal');
+  renderPayments();
+  toast('Saved', label + ' saved as payment method.');
+}
+
+function closeModal(id) { document.getElementById(id).classList.remove('open'); }
+
+// ─── TOAST ────────────────────────────────────────────────────────────────────
+let toastTimer;
+function toast(title, msg, error = false) {
+  const el = document.getElementById('toast');
+  document.getElementById('toastTitle').textContent = title;
+  document.getElementById('toastMsg').textContent = msg;
+  el.className = 'toast show' + (error ? ' error' : '');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => { el.className = 'toast'; }, 3500);
+}
+
+// ─── INIT ─────────────────────────────────────────────────────────────────────
+selectPayMethod('eft');
+selectAddMethod('eft');
 </script>
 </body>
 </html>
